@@ -1,9 +1,9 @@
 package com.github.skyisbule.wxpay.service;
 
 import com.github.skyisbule.wxpay.dao.AwardMapper;
+import com.github.skyisbule.wxpay.dao.PartakeMapper;
 import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
-import com.github.skyisbule.wxpay.domain.Award;
-import com.github.skyisbule.wxpay.domain.PrizeDraw;
+import com.github.skyisbule.wxpay.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -19,6 +19,8 @@ public class PrizeDrawService {
     PrizeDrawMapper prizeDrawDao;
     @Autowired
     AwardMapper awardDao;
+    @Autowired
+    PartakeMapper partakeDao;
 
     public int getMaxId(){
         Integer res = prizeDrawDao.getMaxId();
@@ -44,6 +46,43 @@ public class PrizeDrawService {
             res = 0;
         }
         return res;
+    }
+
+    //关闭抽奖
+    public boolean closePrize(int prizeId){
+        //设置状态为为关闭
+        PrizeDraw prizeDraw = new PrizeDraw();
+        prizeDraw.setPrizeId(prizeId);
+        prizeDraw.setIsClosed(1);
+        prizeDrawDao.updateByPrimaryKeySelective(prizeDraw);
+        //获取参与者们
+        PartakeExample partakeExample = new PartakeExample();
+        partakeExample.createCriteria().andPrizeIdEqualTo(prizeId);
+        List<Partake> partakes = partakeDao.selectByExample(partakeExample);
+        //获取所有奖品
+        AwardExample awardExample = new AwardExample();
+        awardExample.createCriteria().andPrizeIdEqualTo(prizeId);
+        List<Award> awards = awardDao.selectByExample(awardExample);
+        //生成处理结果
+        luckyMan(prizeId,partakes,awards);
+    }
+
+    public List<Lucky> luckyMan(int prizeId,List<Partake> partakes,List<Award> awards){
+        PrizeDraw prizeDraw = prizeDrawDao.selectByPrimaryKey(prizeId);
+        //0代表是实物抽奖
+        if (prizeDraw.getType() == 0){
+            return doRealObj(partakes,awards);
+        }else{//现金抽奖
+            return doCrash(partakes,awards);
+        }
+    }
+
+    public List<Lucky> doRealObj(List<Partake> partakes,List<Award> awards){
+
+    }
+
+    public List<Lucky> doCrash(List<Partake> partakes,List<Award> awards){
+
     }
 
 }
