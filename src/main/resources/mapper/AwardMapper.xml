@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.skyisbule.wxpay.dao.AwardMapper">
+  <resultMap id="BaseResultMap" type="com.github.skyisbule.wxpay.domain.Award">
+    <id column="aid" jdbcType="INTEGER" property="aid" />
+    <result column="prize_id" jdbcType="INTEGER" property="prizeId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="lucky_num" jdbcType="INTEGER" property="luckyNum" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    aid, prize_id, title, lucky_num, type
+  </sql>
+  <select id="selectByExample" parameterType="com.github.skyisbule.wxpay.domain.AwardExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from db_award
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from db_award
+    where aid = #{aid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from db_award
+    where aid = #{aid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.github.skyisbule.wxpay.domain.AwardExample">
+    delete from db_award
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.github.skyisbule.wxpay.domain.Award">
+    insert into db_award (aid, prize_id, title, 
+      lucky_num, type)
+    values (#{aid,jdbcType=INTEGER}, #{prizeId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{luckyNum,jdbcType=INTEGER}, #{type,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.github.skyisbule.wxpay.domain.Award">
+    insert into db_award
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="aid != null">
+        aid,
+      </if>
+      <if test="prizeId != null">
+        prize_id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="luckyNum != null">
+        lucky_num,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="aid != null">
+        #{aid,jdbcType=INTEGER},
+      </if>
+      <if test="prizeId != null">
+        #{prizeId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="luckyNum != null">
+        #{luckyNum,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.github.skyisbule.wxpay.domain.AwardExample" resultType="java.lang.Long">
+    select count(*) from db_award
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update db_award
+    <set>
+      <if test="record.aid != null">
+        aid = #{record.aid,jdbcType=INTEGER},
+      </if>
+      <if test="record.prizeId != null">
+        prize_id = #{record.prizeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.luckyNum != null">
+        lucky_num = #{record.luckyNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update db_award
+    set aid = #{record.aid,jdbcType=INTEGER},
+      prize_id = #{record.prizeId,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      lucky_num = #{record.luckyNum,jdbcType=INTEGER},
+      type = #{record.type,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.github.skyisbule.wxpay.domain.Award">
+    update db_award
+    <set>
+      <if test="prizeId != null">
+        prize_id = #{prizeId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="luckyNum != null">
+        lucky_num = #{luckyNum,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+    </set>
+    where aid = #{aid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.github.skyisbule.wxpay.domain.Award">
+    update db_award
+    set prize_id = #{prizeId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      lucky_num = #{luckyNum,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER}
+    where aid = #{aid,jdbcType=INTEGER}
+  </update>
+</mapper>
