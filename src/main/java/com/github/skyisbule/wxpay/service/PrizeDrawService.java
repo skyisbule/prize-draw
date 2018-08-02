@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -49,7 +50,7 @@ public class PrizeDrawService {
     }
 
     //关闭抽奖
-    public boolean closePrize(int prizeId){
+    public List<Lucky> closePrize(int prizeId){
         //设置状态为为关闭
         PrizeDraw prizeDraw = new PrizeDraw();
         prizeDraw.setPrizeId(prizeId);
@@ -64,7 +65,7 @@ public class PrizeDrawService {
         awardExample.createCriteria().andPrizeIdEqualTo(prizeId);
         List<Award> awards = awardDao.selectByExample(awardExample);
         //生成处理结果
-        luckyMan(prizeId,partakes,awards);
+        return luckyMan(prizeId,partakes,awards);
     }
 
     public List<Lucky> luckyMan(int prizeId,List<Partake> partakes,List<Award> awards){
@@ -78,11 +79,11 @@ public class PrizeDrawService {
     }
 
     public List<Lucky> doRealObj(List<Partake> partakes,List<Award> awards){
-
+        return new ArrayList<Lucky>();
     }
 
     public List<Lucky> doCrash(List<Partake> partakes,List<Award> awards){
-
+        return new ArrayList<Lucky>();
     }
 
 }
