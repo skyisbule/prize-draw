@@ -4,8 +4,12 @@ import com.github.skyisbule.wxpay.domain.PrizeDraw;
 import com.github.skyisbule.wxpay.domain.PrizeDrawExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 public interface PrizeDrawMapper {
+    @Select("select max(prize_id) from db_prize_draw;")
+    Integer getMaxId();
+
     long countByExample(PrizeDrawExample example);
 
     int deleteByExample(PrizeDrawExample example);
