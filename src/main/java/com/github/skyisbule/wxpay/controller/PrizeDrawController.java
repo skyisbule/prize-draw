@@ -29,7 +29,7 @@ public class PrizeDrawController {
      * 插入抽奖信息表
      * 插入奖品表
      */
-    @ApiOperation("创建一个抽奖")
+    @ApiOperation(value = "创建一个抽奖，传抽奖信息以及，List<award>，使用json格式，例如:{\"PrizeDraw\":{xxx},\"awards\":[{xxx},{xxxx},{xxx}]}")
     @RequestMapping("/add")
     public synchronized String add(PrizeDraw prizeDraw,
                                    @RequestParam("Awards") List<Award> awards){

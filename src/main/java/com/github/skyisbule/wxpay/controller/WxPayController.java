@@ -4,8 +4,12 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.request.*;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,6 +64,44 @@ public class WxPayController implements WxPayService {
 
   @Resource(name = "wxPayService")
   private WxPayService wxService;
+
+  @RequestMapping(value = "wxpay")
+  public String pay(HttpServletRequest request, String orderNo, String subject) {
+    try {
+      WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
+      orderRequest.setBody("充值订单");
+      orderRequest.setOutTradeNo("订单号");
+      orderRequest.setTotalFee(100);//元转成分
+      orderRequest.setOpenid("openId");
+      orderRequest.setSpbillCreateIp("userIp");
+      orderRequest.setTimeStart("yyyyMMddHHmmss");
+      orderRequest.setTimeExpire("yyyyMMddHHmmss");
+      wxService.createOrder(orderRequest);
+
+      return orderRequest.toString();
+    } catch (Exception e) {
+      //log.error("微信支付失败！订单号：{},原因:{}", orderNo, e.getMessage());
+      e.printStackTrace();
+      return "支付失败";
+    }
+  }
+
+  @RequestMapping("/wx")
+  public String payNotify(HttpServletRequest request, HttpServletResponse response) {
+    try {
+      String xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
+      WxPayOrderNotifyResult result = wxService.parseOrderNotifyResult(xmlResult);
+      // 结果正确
+      String orderId = result.getOutTradeNo();
+      String tradeNo = result.getTransactionId();
+      //String totalFee = WxPayBaseResult.feeToYuan(result.getTotalFee());
+      //自己处理订单的业务逻辑，需要判断订单是否已经支付过，否则可能会重复调用
+      return WxPayNotifyResponse.success("处理成功!");
+    } catch (Exception e) {
+      //log.error("微信回调结果异常,异常原因{}", e.getMessage());
+      return WxPayNotifyResponse.fail(e.getMessage());
+    }
+  }
 
   @Override
   public String getPayBaseUrl() {
