@@ -2,9 +2,6 @@ package com.github.skyisbule.wxpay.domain;
 
 import java.io.Serializable;
 
-/**
- * @author 
- */
 public class User implements Serializable {
     /**
      * 用户id
