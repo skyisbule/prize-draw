@@ -11,7 +11,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//抽奖模块
+/**
+ * 抽奖的type定义
+ * 0：手动开奖
+ * 1：自动开奖（按时间）
+ * 2：按人数开奖
+ * 3：活动
+ * 4：广告
+ */
 @Api("抽奖模块")
 @RequestMapping(value = "/prize",method = {RequestMethod.GET,RequestMethod.POST})
 @RestController
