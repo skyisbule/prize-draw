@@ -65,6 +65,19 @@ public class WxPayController implements WxPayService {
   @Resource(name = "wxPayService")
   private WxPayService wxService;
 
+  /**
+   * 统一下单(详见https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1)
+   * 在发起微信支付前，需要调用统一下单接口，获取"预支付交易会话标识"
+   * 接口地址：https://api.mch.weixin.qq.com/pay/unifiedorder
+   *
+   * @param request 请求对象，注意一些参数如appid、mchid等不用设置，方法内会自动从配置对象中获取到（前提是对应配置中已经设置）
+   */
+  @Override
+  @PostMapping("/unifiedOrder")
+  public WxPayUnifiedOrderResult unifiedOrder(@RequestBody WxPayUnifiedOrderRequest request) throws WxPayException {
+    return this.wxService.unifiedOrder(request);
+  }
+
   @RequestMapping(value = "wxpay")
   public String pay(HttpServletRequest request, String orderNo, String subject) {
     try {
@@ -103,34 +116,6 @@ public class WxPayController implements WxPayService {
     }
   }
 
-  @Override
-  public String getPayBaseUrl() {
-    //do nothing
-    return null;
-  }
-
-  @Override
-  public byte[] postForBytes(String url, String requestStr, boolean useKey) throws WxPayException {
-    //do nothing
-    return new byte[0];
-  }
-
-  @Override
-  public String post(String url, String requestStr, boolean useKey) throws WxPayException {
-    //do nothing
-    return null;
-  }
-
-  @Override
-  public EntPayService getEntPayService() {
-    //do nothing
-    return null;
-  }
-
-  @Override
-  public void setEntPayService(EntPayService entPayService) {
-    //do nothing
-  }
 
   /**
    * <pre>
@@ -186,39 +171,6 @@ public class WxPayController implements WxPayService {
 
   }
 
-  @Override
-  public WxPayOrderCloseResult closeOrder(WxPayOrderCloseRequest request) throws WxPayException {
-    return null;
-  }
-
-  @Override
-  @PostMapping("/createOrder")
-  public <T> T createOrder(@RequestBody WxPayUnifiedOrderRequest request) throws WxPayException {
-    return this.wxService.createOrder(request);
-  }
-
-  /**
-   * 统一下单(详见https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1)
-   * 在发起微信支付前，需要调用统一下单接口，获取"预支付交易会话标识"
-   * 接口地址：https://api.mch.weixin.qq.com/pay/unifiedorder
-   *
-   * @param request 请求对象，注意一些参数如appid、mchid等不用设置，方法内会自动从配置对象中获取到（前提是对应配置中已经设置）
-   */
-  @Override
-  @PostMapping("/unifiedOrder")
-  public WxPayUnifiedOrderResult unifiedOrder(@RequestBody WxPayUnifiedOrderRequest request) throws WxPayException {
-    return this.wxService.unifiedOrder(request);
-  }
-
-  /**
-   * 不建议使用
-   */
-  @Override
-  @Deprecated
-  public Map<String, String> getPayInfo(WxPayUnifiedOrderRequest request) throws WxPayException {
-    return null;
-  }
-
   /**
    * <pre>
    * 微信支付-申请退款
@@ -262,10 +214,6 @@ public class WxPayController implements WxPayService {
     return this.wxService.refundQuery(transactionId, outTradeNo, outRefundNo, refundId);
   }
 
-  @Override
-  public WxPayRefundQueryResult refundQuery(WxPayRefundQueryRequest request) throws WxPayException {
-    return null;
-  }
 
   /**
    * TODO 此方法需要改造，根据实际需要返回com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse对象
@@ -504,6 +452,11 @@ public class WxPayController implements WxPayService {
   }
 
   @Override
+  public WxPayRefundQueryResult refundQuery(WxPayRefundQueryRequest request) throws WxPayException {
+    return null;
+  }
+
+  @Override
   public String shorturl(WxPayShorturlRequest wxPayShorturlRequest) throws WxPayException {
     //TODO 待补充完善
     return null;
@@ -583,5 +536,55 @@ public class WxPayController implements WxPayService {
   public void setConfig(WxPayConfig config) {
 
   }
+
+  @Override
+  public String getPayBaseUrl() {
+    //do nothing
+    return null;
+  }
+
+  @Override
+  public byte[] postForBytes(String url, String requestStr, boolean useKey) throws WxPayException {
+    //do nothing
+    return new byte[0];
+  }
+
+  @Override
+  public String post(String url, String requestStr, boolean useKey) throws WxPayException {
+    //do nothing
+    return null;
+  }
+
+  @Override
+  public EntPayService getEntPayService() {
+    //do nothing
+    return null;
+  }
+
+  @Override
+  public void setEntPayService(EntPayService entPayService) {
+    //do nothing
+  }
+
+  @Override
+  public WxPayOrderCloseResult closeOrder(WxPayOrderCloseRequest request) throws WxPayException {
+    return null;
+  }
+
+  @Override
+  @PostMapping("/createOrder")
+  public <T> T createOrder(@RequestBody WxPayUnifiedOrderRequest request) throws WxPayException {
+    return this.wxService.createOrder(request);
+  }
+
+  /**
+   * 不建议使用
+   */
+  @Override
+  @Deprecated
+  public Map<String, String> getPayInfo(WxPayUnifiedOrderRequest request) throws WxPayException {
+    return null;
+  }
+
 }
 
