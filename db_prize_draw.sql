@@ -1,5 +1,5 @@
 ﻿# Host: 127.0.0.1  (Version 5.6.40-log)
-# Date: 2018-08-02 09:48:41
+# Date: 2018-08-03 16:59:48
 # Generator: MySQL-Front 6.0  (Build 2.20)
 
 
@@ -30,8 +30,22 @@ CREATE TABLE `db_ad` (
   `prize_id` int(11) DEFAULT NULL COMMENT '关联的奖品id',
   `head_pic` varchar(255) DEFAULT '' COMMENT '头像',
   `nick_name` varchar(35) DEFAULT '' COMMENT '昵称',
-  PRIMARY KEY (`aid`)
+  `secret_key` varchar(255) NOT NULL DEFAULT '' COMMENT '用于控制广告抽奖的鉴权',
+  PRIMARY KEY (`aid`),
+  UNIQUE KEY `secret_key` (`secret_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='广告表';
+
+#
+# Structure for table "db_ad_auth"
+#
+
+CREATE TABLE `db_ad_auth` (
+  `authId` int(11) NOT NULL AUTO_INCREMENT,
+  `prize_id` int(11) NOT NULL DEFAULT '0' COMMENT '抽奖id',
+  `receive_key` varchar(255) NOT NULL DEFAULT '' COMMENT '领取用的key',
+  `is_close` int(1) NOT NULL DEFAULT '0' COMMENT '是否被领取过',
+  PRIMARY KEY (`authId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用于活动的鉴权';
 
 #
 # Structure for table "db_get_money"
@@ -120,7 +134,7 @@ CREATE TABLE `db_recharge` (
 
 CREATE TABLE `db_user` (
   `uuid` char(100) NOT NULL DEFAULT '' COMMENT '用户id',
-  `balance` int(11) unsigned zerofill NOT NULL DEFAULT '00000000000' COMMENT '余额',
+  `balance` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '余额',
   `user_name` varchar(25) DEFAULT NULL COMMENT '用户名',
   `tel_num` char(20) DEFAULT NULL COMMENT '电话号',
   `address` varchar(255) DEFAULT NULL COMMENT '地址',
