@@ -38,6 +38,11 @@ public class Advert implements Serializable {
      */
     private String nickName;
 
+    /**
+     * 用于控制广告抽奖的鉴权
+     */
+    private String secretKey;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getAid() {
@@ -96,6 +101,14 @@ public class Advert implements Serializable {
         this.nickName = nickName;
     }
 
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -114,7 +127,8 @@ public class Advert implements Serializable {
             && (this.getContent() == null ? other.getContent() == null : this.getContent().equals(other.getContent()))
             && (this.getPrizeId() == null ? other.getPrizeId() == null : this.getPrizeId().equals(other.getPrizeId()))
             && (this.getHeadPic() == null ? other.getHeadPic() == null : this.getHeadPic().equals(other.getHeadPic()))
-            && (this.getNickName() == null ? other.getNickName() == null : this.getNickName().equals(other.getNickName()));
+            && (this.getNickName() == null ? other.getNickName() == null : this.getNickName().equals(other.getNickName()))
+            && (this.getSecretKey() == null ? other.getSecretKey() == null : this.getSecretKey().equals(other.getSecretKey()));
     }
 
     @Override
@@ -128,6 +142,7 @@ public class Advert implements Serializable {
         result = prime * result + ((getPrizeId() == null) ? 0 : getPrizeId().hashCode());
         result = prime * result + ((getHeadPic() == null) ? 0 : getHeadPic().hashCode());
         result = prime * result + ((getNickName() == null) ? 0 : getNickName().hashCode());
+        result = prime * result + ((getSecretKey() == null) ? 0 : getSecretKey().hashCode());
         return result;
     }
 
@@ -144,6 +159,7 @@ public class Advert implements Serializable {
         sb.append(", prizeId=").append(prizeId);
         sb.append(", headPic=").append(headPic);
         sb.append(", nickName=").append(nickName);
+        sb.append(", secretKey=").append(secretKey);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

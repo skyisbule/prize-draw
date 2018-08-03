@@ -8,7 +8,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@EnableSwagger2Doc
+//@EnableSwagger2Doc
 @EnableTransactionManagement
 @MapperScan("com.github.skyisbule.wxpay.dao")
 @SpringBootApplication

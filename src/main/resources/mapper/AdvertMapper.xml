@@ -9,6 +9,7 @@
     <result column="prize_id" jdbcType="INTEGER" property="prizeId" />
     <result column="head_pic" jdbcType="VARCHAR" property="headPic" />
     <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="secret_key" jdbcType="VARCHAR" property="secretKey" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -69,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    aid, uuid, title, content, prize_id, head_pic, nick_name
+    aid, uuid, title, content, prize_id, head_pic, nick_name, secret_key
   </sql>
   <select id="selectByExample" parameterType="com.github.skyisbule.wxpay.domain.AdvertExample" resultMap="BaseResultMap">
     select
@@ -112,10 +113,10 @@
   <insert id="insert" parameterType="com.github.skyisbule.wxpay.domain.Advert">
     insert into db_ad (aid, uuid, title, 
       content, prize_id, head_pic, 
-      nick_name)
+      nick_name, secret_key)
     values (#{aid,jdbcType=INTEGER}, #{uuid,jdbcType=CHAR}, #{title,jdbcType=VARCHAR}, 
       #{content,jdbcType=VARCHAR}, #{prizeId,jdbcType=INTEGER}, #{headPic,jdbcType=VARCHAR}, 
-      #{nickName,jdbcType=VARCHAR})
+      #{nickName,jdbcType=VARCHAR}, #{secretKey,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.github.skyisbule.wxpay.domain.Advert">
     insert into db_ad
@@ -141,6 +142,9 @@
       <if test="nickName != null">
         nick_name,
       </if>
+      <if test="secretKey != null">
+        secret_key,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="aid != null">
@@ -163,6 +167,9 @@
       </if>
       <if test="nickName != null">
         #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKey != null">
+        #{secretKey,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -196,6 +203,9 @@
       <if test="record.nickName != null">
         nick_name = #{record.nickName,jdbcType=VARCHAR},
       </if>
+      <if test="record.secretKey != null">
+        secret_key = #{record.secretKey,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -209,7 +219,8 @@
       content = #{record.content,jdbcType=VARCHAR},
       prize_id = #{record.prizeId,jdbcType=INTEGER},
       head_pic = #{record.headPic,jdbcType=VARCHAR},
-      nick_name = #{record.nickName,jdbcType=VARCHAR}
+      nick_name = #{record.nickName,jdbcType=VARCHAR},
+      secret_key = #{record.secretKey,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -235,6 +246,9 @@
       <if test="nickName != null">
         nick_name = #{nickName,jdbcType=VARCHAR},
       </if>
+      <if test="secretKey != null">
+        secret_key = #{secretKey,jdbcType=VARCHAR},
+      </if>
     </set>
     where aid = #{aid,jdbcType=INTEGER}
   </update>
@@ -245,7 +259,8 @@
       content = #{content,jdbcType=VARCHAR},
       prize_id = #{prizeId,jdbcType=INTEGER},
       head_pic = #{headPic,jdbcType=VARCHAR},
-      nick_name = #{nickName,jdbcType=VARCHAR}
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      secret_key = #{secretKey,jdbcType=VARCHAR}
     where aid = #{aid,jdbcType=INTEGER}
   </update>
 </mapper>

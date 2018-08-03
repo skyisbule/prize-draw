@@ -593,6 +593,76 @@ public class AdvertExample {
             addCriterion("nick_name not between", value1, value2, "nickName");
             return (Criteria) this;
         }
+
+        public Criteria andSecretKeyIsNull() {
+            addCriterion("secret_key is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyIsNotNull() {
+            addCriterion("secret_key is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyEqualTo(String value) {
+            addCriterion("secret_key =", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyNotEqualTo(String value) {
+            addCriterion("secret_key <>", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyGreaterThan(String value) {
+            addCriterion("secret_key >", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyGreaterThanOrEqualTo(String value) {
+            addCriterion("secret_key >=", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyLessThan(String value) {
+            addCriterion("secret_key <", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyLessThanOrEqualTo(String value) {
+            addCriterion("secret_key <=", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyLike(String value) {
+            addCriterion("secret_key like", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyNotLike(String value) {
+            addCriterion("secret_key not like", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyIn(List<String> values) {
+            addCriterion("secret_key in", values, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyNotIn(List<String> values) {
+            addCriterion("secret_key not in", values, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyBetween(String value1, String value2) {
+            addCriterion("secret_key between", value1, value2, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyNotBetween(String value1, String value2) {
+            addCriterion("secret_key not between", value1, value2, "secretKey");
+            return (Criteria) this;
+        }
     }
 
     /**
