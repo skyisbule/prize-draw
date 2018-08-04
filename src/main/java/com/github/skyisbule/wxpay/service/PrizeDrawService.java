@@ -23,7 +23,7 @@ public class PrizeDrawService {
     @Autowired
     PartakeMapper partakeDao;
 
-    public int getMaxId(){
+    private int getMaxId(){
         Integer res = prizeDrawDao.getMaxId();
         if (res == null){
             res = 0;
@@ -33,7 +33,7 @@ public class PrizeDrawService {
 
     @Transactional(rollbackFor = Exception.class , isolation = Isolation.REPEATABLE_READ)
     public Integer createPrize(PrizeDraw prizeDraw, List<Award> awards){
-        Integer res = 0;
+        Integer res;
         try {
             prizeDrawDao.insert(prizeDraw);//创建抽奖
             Integer maxPrizeId = this.getMaxId() + 1;
@@ -78,11 +78,11 @@ public class PrizeDrawService {
         }
     }
 
-    public List<Lucky> doRealObj(List<Partake> partakes,List<Award> awards){
+    private List<Lucky> doRealObj(List<Partake> partakes,List<Award> awards){
         return new ArrayList<Lucky>();
     }
 
-    public List<Lucky> doCrash(List<Partake> partakes,List<Award> awards){
+    private List<Lucky> doCrash(List<Partake> partakes,List<Award> awards){
         return new ArrayList<Lucky>();
     }
 
