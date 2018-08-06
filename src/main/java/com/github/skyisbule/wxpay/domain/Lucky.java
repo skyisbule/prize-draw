@@ -31,6 +31,11 @@ public class Lucky implements Serializable {
      */
     private String nickName;
 
+    /**
+     * 奖品的个数或者金钱的钱数
+     */
+    private Integer awardNum;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getLid() {
@@ -73,6 +78,14 @@ public class Lucky implements Serializable {
         this.nickName = nickName;
     }
 
+    public Integer getAwardNum() {
+        return awardNum;
+    }
+
+    public void setAwardNum(Integer awardNum) {
+        this.awardNum = awardNum;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -89,7 +102,8 @@ public class Lucky implements Serializable {
             && (this.getAwardId() == null ? other.getAwardId() == null : this.getAwardId().equals(other.getAwardId()))
             && (this.getUuid() == null ? other.getUuid() == null : this.getUuid().equals(other.getUuid()))
             && (this.getHeadPic() == null ? other.getHeadPic() == null : this.getHeadPic().equals(other.getHeadPic()))
-            && (this.getNickName() == null ? other.getNickName() == null : this.getNickName().equals(other.getNickName()));
+            && (this.getNickName() == null ? other.getNickName() == null : this.getNickName().equals(other.getNickName()))
+            && (this.getAwardNum() == null ? other.getAwardNum() == null : this.getAwardNum().equals(other.getAwardNum()));
     }
 
     @Override
@@ -101,6 +115,7 @@ public class Lucky implements Serializable {
         result = prime * result + ((getUuid() == null) ? 0 : getUuid().hashCode());
         result = prime * result + ((getHeadPic() == null) ? 0 : getHeadPic().hashCode());
         result = prime * result + ((getNickName() == null) ? 0 : getNickName().hashCode());
+        result = prime * result + ((getAwardNum() == null) ? 0 : getAwardNum().hashCode());
         return result;
     }
 
@@ -115,6 +130,7 @@ public class Lucky implements Serializable {
         sb.append(", uuid=").append(uuid);
         sb.append(", headPic=").append(headPic);
         sb.append(", nickName=").append(nickName);
+        sb.append(", awardNum=").append(awardNum);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

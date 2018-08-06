@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -68,14 +69,17 @@ public class PrizeDrawService {
         return luckyMan(prizeId,partakes,awards);
     }
 
+    /**
+     * 这里是关闭抽奖的处理流程
+     *
+     */
     public List<Lucky> luckyMan(int prizeId,List<Partake> partakes,List<Award> awards){
         PrizeDraw prizeDraw = prizeDrawDao.selectByPrimaryKey(prizeId);
-        //0代表是实物抽奖
-        if (prizeDraw.getType() == 0){
-            return doRealObj(partakes,awards);
-        }else{//现金抽奖
-            return doCrash(partakes,awards);
-        }
+
+        Collections.shuffle(partakes); //一堆用户id
+        Collections.shuffle(awards);
+
+        return new ArrayList<Lucky>();
     }
 
     private List<Lucky> doRealObj(List<Partake> partakes,List<Award> awards){

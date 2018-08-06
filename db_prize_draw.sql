@@ -1,5 +1,5 @@
 ﻿# Host: 127.0.0.1  (Version 5.6.40-log)
-# Date: 2018-08-03 16:59:48
+# Date: 2018-08-06 14:04:01
 # Generator: MySQL-Front 6.0  (Build 2.20)
 
 
@@ -69,6 +69,7 @@ CREATE TABLE `db_lucky` (
   `uuid` char(100) NOT NULL DEFAULT '' COMMENT '中奖人',
   `head_pic` varchar(255) DEFAULT NULL COMMENT '头像链接',
   `nick_name` varchar(35) DEFAULT NULL COMMENT '昵称',
+  `award_num` int(11) NOT NULL DEFAULT '0' COMMENT '奖品的个数或者金钱的钱数',
   PRIMARY KEY (`lid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='中奖表';
 
@@ -99,7 +100,7 @@ CREATE TABLE `db_prize_draw` (
   `expire_time` timestamp NULL DEFAULT NULL COMMENT '若选择定时开奖，则传它进来，到期自动开奖。',
   `is_closed` int(1) unsigned zerofill NOT NULL DEFAULT '0' COMMENT '是否已经结束，若结束则外人不得接着抽奖。',
   PRIMARY KEY (`prize_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='创建抽奖表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='创建抽奖表';
 
 #
 # Structure for table "db_award"

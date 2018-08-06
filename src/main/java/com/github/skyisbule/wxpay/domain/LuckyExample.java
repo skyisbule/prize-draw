@@ -453,6 +453,66 @@ public class LuckyExample {
             addCriterion("nick_name not between", value1, value2, "nickName");
             return (Criteria) this;
         }
+
+        public Criteria andAwardNumIsNull() {
+            addCriterion("award_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumIsNotNull() {
+            addCriterion("award_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumEqualTo(Integer value) {
+            addCriterion("award_num =", value, "awardNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumNotEqualTo(Integer value) {
+            addCriterion("award_num <>", value, "awardNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumGreaterThan(Integer value) {
+            addCriterion("award_num >", value, "awardNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumGreaterThanOrEqualTo(Integer value) {
+            addCriterion("award_num >=", value, "awardNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumLessThan(Integer value) {
+            addCriterion("award_num <", value, "awardNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumLessThanOrEqualTo(Integer value) {
+            addCriterion("award_num <=", value, "awardNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumIn(List<Integer> values) {
+            addCriterion("award_num in", values, "awardNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumNotIn(List<Integer> values) {
+            addCriterion("award_num not in", values, "awardNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumBetween(Integer value1, Integer value2) {
+            addCriterion("award_num between", value1, value2, "awardNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andAwardNumNotBetween(Integer value1, Integer value2) {
+            addCriterion("award_num not between", value1, value2, "awardNum");
+            return (Criteria) this;
+        }
     }
 
     /**
