@@ -5,6 +5,7 @@ import com.github.skyisbule.wxpay.dao.LuckyMapper;
 import com.github.skyisbule.wxpay.dao.PartakeMapper;
 import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
 import com.github.skyisbule.wxpay.domain.*;
+import com.github.skyisbule.wxpay.util.RedPecket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -87,10 +88,10 @@ public class PrizeDrawService {
         Collections.shuffle(awards);  //一堆奖品
 
         Integer awardSize = awards.size() - 1;
-        Integer awardNow  = 0;
+
 
         awards.forEach(award -> {//遍历一下奖品
-
+            Integer awardNow  = 0;
             if (award.getType()==0){//如果奖品是实物
                 for (int i = 0;i<award.getLuckyNum();i++){
                     if (awardNow>awardSize) break;//这里判断下还有没有人
@@ -100,13 +101,21 @@ public class PrizeDrawService {
                     luckyMan.setAwardNum(1);
                     this.setLuckyManInfo(partake,luckyMan);
                     luckyMans.add(luckyMan);
+                    awardNow++;
                 }
             }
 
             if (award.getType()==1){//这里代表现金红包
                 for (int i =0 ;i<award.getLuckyNum();i++){
                     if (awardNow>awardSize) break;//这里判断下还有没有人
-                    //todo  这里生成一个现金的列表
+                    int redPacketIndex = 0;
+                    ArrayList<Integer> redPackets = RedPecket.build(award.getLuckyNum(),award.getLuckyNum());
+                    Partake partake = partakes.get(awardNow);
+                    Lucky luckyMan = new Lucky();
+                    luckyMan.setAwardId(award.getAid());
+                    luckyMan.setAwardNum(redPackets.get(redPacketIndex));
+                    this.setLuckyManInfo(partake,luckyMan);
+                    awardNow++;
                 }
             }
 
