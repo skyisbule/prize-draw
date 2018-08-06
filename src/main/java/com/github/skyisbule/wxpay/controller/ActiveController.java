@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api("活动的api")
 @RestController
-@RequestMapping(value = "/active",method = {RequestMethod.GET,RequestMethod.POST})
+@RequestMapping(value = "/active",method = RequestMethod.POST)
 public class ActiveController {
 
     @Autowired

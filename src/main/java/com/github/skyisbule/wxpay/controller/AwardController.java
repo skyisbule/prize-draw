@@ -14,7 +14,7 @@ import java.util.List;
 
 @Api("奖品相关的api")
 @RestController
-@RequestMapping(value = "/award",method = {RequestMethod.GET,RequestMethod.POST})
+@RequestMapping(value = "/award",method = RequestMethod.POST)
 public class AwardController {
 
     @Autowired

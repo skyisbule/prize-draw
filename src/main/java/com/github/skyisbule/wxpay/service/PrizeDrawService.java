@@ -1,6 +1,7 @@
 package com.github.skyisbule.wxpay.service;
 
 import com.github.skyisbule.wxpay.dao.AwardMapper;
+import com.github.skyisbule.wxpay.dao.LuckyMapper;
 import com.github.skyisbule.wxpay.dao.PartakeMapper;
 import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
 import com.github.skyisbule.wxpay.domain.*;
@@ -11,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class PrizeDrawService {
-
 
     @Autowired
     PrizeDrawMapper prizeDrawDao;
@@ -23,6 +24,10 @@ public class PrizeDrawService {
     AwardMapper awardDao;
     @Autowired
     PartakeMapper partakeDao;
+    @Autowired
+    UserSerivce userSerivce;
+    @Autowired
+    LuckyMapper luckyDao;
 
     private int getMaxId(){
         Integer res = prizeDrawDao.getMaxId();
@@ -76,10 +81,66 @@ public class PrizeDrawService {
     public List<Lucky> luckyMan(int prizeId,List<Partake> partakes,List<Award> awards){
         PrizeDraw prizeDraw = prizeDrawDao.selectByPrimaryKey(prizeId);
 
-        Collections.shuffle(partakes); //一堆用户id
-        Collections.shuffle(awards);
+        ArrayList<Lucky> luckyMans = new ArrayList<>();
 
-        return new ArrayList<Lucky>();
+        Collections.shuffle(partakes); //一堆用户id
+        Collections.shuffle(awards);  //一堆奖品
+
+        Integer awardSize = awards.size() - 1;
+        Integer awardNow  = 0;
+
+        awards.forEach(award -> {//遍历一下奖品
+
+            if (award.getType()==0){//如果奖品是实物
+                for (int i = 0;i<award.getLuckyNum();i++){
+                    if (awardNow>awardSize) break;//这里判断下还有没有人
+                    Partake partake = partakes.get(awardNow);
+                    Lucky luckyMan = new Lucky();
+                    luckyMan.setAwardId(award.getAid());
+                    luckyMan.setAwardNum(1);
+                    this.setLuckyManInfo(partake,luckyMan);
+                    luckyMans.add(luckyMan);
+                }
+            }
+
+            if (award.getType()==1){//这里代表现金红包
+                for (int i =0 ;i<award.getLuckyNum();i++){
+                    if (awardNow>awardSize) break;//这里判断下还有没有人
+                    //todo  这里生成一个现金的列表
+                }
+            }
+
+        });
+
+        Integer totalAwardsNum  = 0;                 //奖品的个数
+        Integer totalLuckyNum   = luckyMans.size(); //得奖的人数。。
+        for (Award award : awards) totalAwardsNum+=award.getLuckyNum();
+
+        if (totalAwardsNum>totalLuckyNum){//假设说奖品的个数比中奖人数多，需要将现金奖品退回账户。
+            HashMap<Integer,Integer> luckyHashMap = new HashMap<>();
+            for (Lucky luckyMan : luckyMans) { //  <奖品id，获奖的人数>;
+                if (!luckyHashMap.containsKey(luckyMan.getAwardId())){
+                    luckyHashMap.put(luckyMan.getAwardId(),0);
+                }
+                Integer num = luckyHashMap.get(luckyMan.getAwardId())+1;
+                luckyHashMap.put(luckyMan.getAwardId(),num);
+            }
+            awards.forEach(award -> {
+                if (award.getType()==1){
+                    if (award.getLuckyNum()>luckyHashMap.get(award.getAid())){//说明没领完  要把剩下的钱退给创建抽奖的人
+                        Integer realNum = 0;//实际领的钱
+                        for (Lucky luckyMan : luckyMans) {
+                            realNum += luckyMan.getAwardNum();
+                        }
+                        if (award.getLuckyNum()>realNum){//这里把多余的没有领的钱退回给原先的人。
+                            userSerivce.updateBalance(prizeDraw.getUuid(),award.getLuckyNum()-realNum);
+                        }
+                    }
+                }
+            });
+        }
+        luckyMans.forEach(lucky -> luckyDao.insert(lucky));//批量入库
+        return luckyMans;
     }
 
     private List<Lucky> doRealObj(List<Partake> partakes,List<Award> awards){
@@ -88,6 +149,13 @@ public class PrizeDrawService {
 
     private List<Lucky> doCrash(List<Partake> partakes,List<Award> awards){
         return new ArrayList<Lucky>();
+    }
+
+    private Lucky setLuckyManInfo(Partake partake,Lucky lucky){
+        lucky.setHeadPic(partake.getHeadPic());
+        lucky.setNickName(partake.getNickName());
+        lucky.setUuid(partake.getUuid());
+        return lucky;
     }
 
 }

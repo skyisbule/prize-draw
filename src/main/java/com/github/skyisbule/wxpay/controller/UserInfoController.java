@@ -16,7 +16,7 @@ public class UserInfoController {
     UserMapper dao;
 
     @ApiOperation("创建一个用户信息")
-    @RequestMapping(value = "/register",method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = "/register",method = RequestMethod.POST)
     public String doRegister(User user){
         String resultContent;
         user.setBalance(0);

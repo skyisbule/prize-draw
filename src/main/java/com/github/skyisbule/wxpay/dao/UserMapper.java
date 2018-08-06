@@ -4,8 +4,14 @@ import com.github.skyisbule.wxpay.domain.User;
 import com.github.skyisbule.wxpay.domain.UserExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 public interface UserMapper {
+
+    @Update("update db_user set balance = balance+ ${money} where uuid = #{uuid}")
+    public void updateBalance(@Param("uuid")String uuid,
+                              @Param("mondy")Integer money);
+
     long countByExample(UserExample example);
 
     int deleteByExample(UserExample example);

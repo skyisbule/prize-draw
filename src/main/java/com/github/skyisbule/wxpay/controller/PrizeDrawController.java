@@ -20,7 +20,7 @@ import java.util.List;
  * 4：广告
  */
 @Api("抽奖模块")
-@RequestMapping(value = "/prize",method = {RequestMethod.GET,RequestMethod.POST})
+@RequestMapping(value = "/prize",method = RequestMethod.POST)
 @RestController
 public class PrizeDrawController {
 

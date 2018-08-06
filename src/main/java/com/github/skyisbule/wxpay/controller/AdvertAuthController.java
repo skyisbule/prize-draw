@@ -17,7 +17,7 @@ import java.util.List;
 
 @Api("广告可以领取成功的鉴权类")
 @RestController
-@RequestMapping(value = "/auth",method = {RequestMethod.GET,RequestMethod.POST})
+@RequestMapping(value = "/auth",method = RequestMethod.POST)
 public class AdvertAuthController {
 
     @Autowired

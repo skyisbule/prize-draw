@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api("处理广告的api")
 @RestController
-@RequestMapping(value = "/advert",method = {RequestMethod.GET,RequestMethod.POST})
+@RequestMapping(value = "/advert",method = RequestMethod.POST)
 public class AdvertController {
 
     @Autowired
