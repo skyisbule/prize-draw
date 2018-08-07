@@ -6,6 +6,7 @@ import com.github.skyisbule.wxpay.dao.PartakeMapper;
 import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
 import com.github.skyisbule.wxpay.domain.*;
 import com.github.skyisbule.wxpay.service.PartakeService;
+import com.github.skyisbule.wxpay.service.PrizeDrawService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class PartakeController {
     AdvertAuthMapper authDao;
     @Autowired
     PartakeService partakeService;
+    @Autowired
+    PrizeDrawService prizeDrawService;
 
     @ApiOperation("添加抽奖人，参与抽奖,如果是参与广告抽奖的用户，需要额外传一个partakeKey做参与鉴权。")
     @RequestMapping("/add")
@@ -51,14 +54,15 @@ public class PartakeController {
             closeKey.setIsClose(1);
             authDao.updateByExampleSelective(closeKey,e);
         }
-        //todo 这里的话要判断一下是否是满人数开奖
         if (prizeDraw.getType()==2){//每次插入都要看看人数是不是满了
             int luckyNum    = partakeService.getLuckyNumByPrizeId(partake.getPrizeId());
             int partakedNum = partakeService.getPartakedNumByPrizeId(partake.getPrizeId());
-            if (partakedNum>luckyNum){//如果参加的人满了  则要开奖了
-                //todo  这里直接执行关闭抽奖的方法
-                return "抽奖人数已满:（";
+            if (partakedNum==luckyNum-1){//这里说明这个人插入后人就满了，则直接执行开奖
+                dao.insert(partake);//把这个人插入进去后直接开
+                prizeDrawService.closePrize(partake.getPrizeId());
+                return "success";
             }
+            if (partakedNum>luckyNum) return "人数已满:(";
         }
         return 1==dao.insert(partake)?"success":"error";
     }
