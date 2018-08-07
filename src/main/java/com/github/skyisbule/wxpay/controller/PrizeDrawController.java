@@ -56,6 +56,11 @@ public class PrizeDrawController {
         return service.closePrize(prizeId);
     }
 
+    @ApiOperation("查看一个抽奖是否已经关闭")
+    public String isClosed(int prizeId){
+        return service.isClosed(prizeId)?"{\"msg\":\"true\"}":"{\"msg\":\"false\"}";
+    }
+
     @ApiOperation("传抽奖的id，查看抽奖信息。")
     @RequestMapping("/get-by-prize-id")
     public PrizeDraw getById(int id){

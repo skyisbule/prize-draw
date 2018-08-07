@@ -63,6 +63,12 @@ public class PartakeController {
         return 1==dao.insert(partake)?"success":"error";
     }
 
+    @ApiOperation("查看有多少人参与了抽奖")
+    @RequestMapping("/count-by-id")
+    public Integer getPartakeNum(Integer prizeId){
+        return partakeService.getPartakedNumByPrizeId(prizeId);
+    }
+
     @ApiOperation("通过抽奖id拿到参与抽奖的人")
     @RequestMapping("/get-by-prize-id")
     public List<Partake> getByPid(Integer prizeId){
