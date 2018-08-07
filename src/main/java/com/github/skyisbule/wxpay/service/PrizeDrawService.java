@@ -119,6 +119,8 @@ public class PrizeDrawService {
                     luckyMan.setAwardId(award.getAid());
                     luckyMan.setAwardNum(redPackets.get(redPacketIndex));
                     this.setLuckyManInfo(partake,luckyMan);
+                    //这里要更新一下用户的余额，把钱打到用户账户里。
+                    userSerivce.updateBalance(luckyMan.getUuid(),luckyMan.getAwardNum());
                     awardNow++;
                 }
             }
