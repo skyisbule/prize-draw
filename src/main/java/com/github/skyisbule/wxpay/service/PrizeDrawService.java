@@ -79,6 +79,7 @@ public class PrizeDrawService {
      * 这里是关闭抽奖的处理流程
      *
      */
+    @Transactional(rollbackFor = Exception.class , isolation = Isolation.REPEATABLE_READ)
     public List<Lucky> luckyMan(int prizeId,List<Partake> partakes,List<Award> awards){
         PrizeDraw prizeDraw = prizeDrawDao.selectByPrimaryKey(prizeId);
 
@@ -89,12 +90,15 @@ public class PrizeDrawService {
 
         Integer awardSize = awards.size() - 1;
 
+        if (partakes.size()==0){//说明有关闭抽奖时没人参与
+            return new ArrayList<Lucky>();
+        }
 
-        awards.forEach(award -> {//遍历一下奖品
-            Integer awardNow  = 0;
+        Integer awardNow  = 0;
+        for (Award award : awards) {
             if (award.getType()==0){//如果奖品是实物
                 for (int i = 0;i<award.getLuckyNum();i++){
-                    if (awardNow>awardSize) break;//这里判断下还有没有人
+                    if (awardNow>awardSize-1) break;//这里判断下还有没有人
                     Partake partake = partakes.get(awardNow);
                     Lucky luckyMan = new Lucky();
                     luckyMan.setAwardId(award.getAid());
@@ -107,7 +111,7 @@ public class PrizeDrawService {
 
             if (award.getType()==1){//这里代表现金红包
                 for (int i =0 ;i<award.getLuckyNum();i++){
-                    if (awardNow>awardSize) break;//这里判断下还有没有人
+                    if (awardNow>awardSize-1) break;//这里判断下还有没有人
                     int redPacketIndex = 0;
                     ArrayList<Integer> redPackets = RedPecket.build(award.getLuckyNum(),award.getLuckyNum());
                     Partake partake = partakes.get(awardNow);
@@ -118,8 +122,8 @@ public class PrizeDrawService {
                     awardNow++;
                 }
             }
+        }
 
-        });
 
         Integer totalAwardsNum  = 0;                 //奖品的个数
         Integer totalLuckyNum   = luckyMans.size(); //得奖的人数。。
@@ -134,7 +138,8 @@ public class PrizeDrawService {
                 Integer num = luckyHashMap.get(luckyMan.getAwardId())+1;
                 luckyHashMap.put(luckyMan.getAwardId(),num);
             }
-            awards.forEach(award -> {
+
+            for (Award award : awards) {
                 if (award.getType()==1){
                     if (award.getLuckyNum()>luckyHashMap.get(award.getAid())){//说明没领完  要把剩下的钱退给创建抽奖的人
                         Integer realNum = 0;//实际领的钱
@@ -146,9 +151,10 @@ public class PrizeDrawService {
                         }
                     }
                 }
-            });
+            }
+
         }
-        luckyMans.forEach(lucky -> luckyDao.insert(lucky));//批量入库
+        for (Lucky lucky : luckyMans) luckyDao.insert(lucky);
         return luckyMans;
     }
 
@@ -165,6 +171,12 @@ public class PrizeDrawService {
         lucky.setNickName(partake.getNickName());
         lucky.setUuid(partake.getUuid());
         return lucky;
+    }
+
+
+    public boolean isClosed(Integer prizeId){
+        PrizeDraw prizeDraw = prizeDrawDao.selectByPrimaryKey(prizeId);
+        return prizeDraw.getIsClosed()==1;
     }
 
 }

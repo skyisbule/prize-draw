@@ -2,6 +2,7 @@ package com.github.skyisbule.wxpay.controller;
 
 import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
 import com.github.skyisbule.wxpay.domain.Award;
+import com.github.skyisbule.wxpay.domain.Lucky;
 import com.github.skyisbule.wxpay.domain.PrizeDraw;
 import com.github.skyisbule.wxpay.service.PrizeDrawService;
 import com.github.skyisbule.wxpay.vo.PrizeDrawVO;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +45,15 @@ public class PrizeDrawController {
         Integer prizeId = service.createPrize(vo.prizeDraw,vo.awards);
         //todo:这里对发来的数据验证一下
         return prizeId==0?"error":prizeId.toString();
+    }
+
+    @ApiOperation("关闭一个抽奖，通过id")
+    @RequestMapping("/close")
+    public synchronized List<Lucky> close(int prizeId){
+        if (service.isClosed(prizeId)){//如果已经关闭了
+            return new ArrayList<Lucky>();
+        }
+        return service.closePrize(prizeId);
     }
 
     @ApiOperation("传抽奖的id，查看抽奖信息。")
