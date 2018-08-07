@@ -4,6 +4,7 @@ import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
 import com.github.skyisbule.wxpay.domain.Award;
 import com.github.skyisbule.wxpay.domain.PrizeDraw;
 import com.github.skyisbule.wxpay.service.PrizeDrawService;
+import com.github.skyisbule.wxpay.vo.PrizeDrawVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,8 @@ public class PrizeDrawController {
      */
     @ApiOperation(value = "创建一个抽奖，传抽奖信息以及，List<award>，使用json格式，例如:{\"PrizeDraw\":{xxx},\"awards\":[{xxx},{xxxx},{xxx}]}")
     @RequestMapping("/add")
-    public synchronized String add(PrizeDraw prizeDraw,
-                                   @RequestParam("Awards") List<Award> awards){
-        Integer prizeId = service.createPrize(prizeDraw,awards);
+    public synchronized String add(@RequestBody PrizeDrawVO vo){//修改一下请求参数的接收方式
+        Integer prizeId = service.createPrize(vo.prizeDraw,vo.awards);
         //todo:这里对发来的数据验证一下
         return prizeId==0?"error":prizeId.toString();
     }

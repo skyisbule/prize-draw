@@ -43,13 +43,13 @@ public class PrizeDrawService {
         Integer res;
         try {
             prizeDrawDao.insert(prizeDraw);//创建抽奖
-            Integer maxPrizeId = this.getMaxId() + 1;
+            Integer maxPrizeId = this.getMaxId();
             res = maxPrizeId;
             //给awards设置id并批量插入.
-            awards.forEach(award -> {
+            for (Award award : awards) {
                 award.setPrizeId(maxPrizeId);
                 awardDao.insert(award);
-            });
+            }
         }catch (Exception e){
             res = 0;
         }

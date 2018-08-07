@@ -27,7 +27,7 @@ public class PrizeDraw implements Serializable {
     /**
      * 创建这个抽奖的时间
      */
-    private Date createTime;
+    private Date createTime = new Date();
 
     /**
      * 若选择定时开奖，则传它进来，到期自动开奖。
@@ -37,7 +37,7 @@ public class PrizeDraw implements Serializable {
     /**
      * 是否已经结束，若结束则外人不得接着抽奖。
      */
-    private Integer isClosed;
+    private Integer isClosed = 0;
 
     private static final long serialVersionUID = 1L;
 
