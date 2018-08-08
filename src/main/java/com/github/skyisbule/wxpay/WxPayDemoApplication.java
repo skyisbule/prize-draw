@@ -1,5 +1,6 @@
 package com.github.skyisbule.wxpay;
 
+import com.github.skyisbule.wxpay.auth.AuthKeyCheck;
 import com.spring4all.swagger.EnableSwagger2Doc;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +16,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class WxPayDemoApplication extends SpringBootServletInitializer {
   public static void main(String[] args) {
     SpringApplication.run(WxPayDemoApplication.class, args);
+    //do check
+    AuthKeyCheck check = new AuthKeyCheck();
+    check.init();
   }
 
   @Override
