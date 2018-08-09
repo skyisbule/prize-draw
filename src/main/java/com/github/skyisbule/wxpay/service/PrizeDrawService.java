@@ -91,7 +91,10 @@ public class PrizeDrawService {
         Integer awardSize = awards.size() - 1;
 
         if (partakes.size()==0){//说明有关闭抽奖时没人参与
-            //todo  如果有现金抽奖这里要把钱退回给发起者
+            for (Award award : awards) {
+                if (award.getType()==1)//说明是现金奖励  直接退回原账户
+                    userSerivce.updateBalance(prizeDraw.getUuid(),Integer.parseInt(award.getTitle()));
+            }
             return new ArrayList<Lucky>();
         }
 
