@@ -113,7 +113,7 @@ public class PrizeDrawService {
                 for (int i =0 ;i<award.getLuckyNum();i++){
                     if (awardNow>awardSize-1) break;//这里判断下还有没有人
                     int redPacketIndex = 0;
-                    ArrayList<Integer> redPackets = RedPecket.build(award.getLuckyNum(),award.getLuckyNum());
+                    ArrayList<Integer> redPackets = RedPecket.build(Integer.parseInt(award.getTitle()),award.getLuckyNum());
                     Partake partake = partakes.get(awardNow);
                     Lucky luckyMan = new Lucky();
                     luckyMan.setAwardId(award.getAid());
