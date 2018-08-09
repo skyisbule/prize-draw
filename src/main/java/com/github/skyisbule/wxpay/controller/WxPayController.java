@@ -84,15 +84,16 @@ public class WxPayController implements WxPayService {
       WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
       orderRequest.setBody("充值订单");
       orderRequest.setOutTradeNo("订单号");
-      orderRequest.setTotalFee(1);//元转成分
+      orderRequest.setTotalFee(100);//元转成分
       orderRequest.setOpenid("openId");
       orderRequest.setSpbillCreateIp("userIp");
       orderRequest.setTimeStart("yyyyMMddHHmmss");
       orderRequest.setTimeExpire("yyyyMMddHHmmss");
-      return wxService.createOrder(orderRequest).toString();
+      wxService.createOrder(orderRequest);
 
+      return orderRequest.toString();
     } catch (Exception e) {
-      System.out.println("微信支付失败！订单号：{},原因:{}"+orderNo+e.getMessage());
+      //log.error("微信支付失败！订单号：{},原因:{}", orderNo, e.getMessage());
       e.printStackTrace();
       return "支付失败";
     }
