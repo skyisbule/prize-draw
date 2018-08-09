@@ -564,6 +564,66 @@ public class PrizeDrawExample {
             addCriterion("is_closed not between", value1, value2, "isClosed");
             return (Criteria) this;
         }
+
+        public Criteria andMaxPeopleIsNull() {
+            addCriterion("max_people is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleIsNotNull() {
+            addCriterion("max_people is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleEqualTo(Integer value) {
+            addCriterion("max_people =", value, "maxPeople");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleNotEqualTo(Integer value) {
+            addCriterion("max_people <>", value, "maxPeople");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleGreaterThan(Integer value) {
+            addCriterion("max_people >", value, "maxPeople");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleGreaterThanOrEqualTo(Integer value) {
+            addCriterion("max_people >=", value, "maxPeople");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleLessThan(Integer value) {
+            addCriterion("max_people <", value, "maxPeople");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleLessThanOrEqualTo(Integer value) {
+            addCriterion("max_people <=", value, "maxPeople");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleIn(List<Integer> values) {
+            addCriterion("max_people in", values, "maxPeople");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleNotIn(List<Integer> values) {
+            addCriterion("max_people not in", values, "maxPeople");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleBetween(Integer value1, Integer value2) {
+            addCriterion("max_people between", value1, value2, "maxPeople");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxPeopleNotBetween(Integer value1, Integer value2) {
+            addCriterion("max_people not between", value1, value2, "maxPeople");
+            return (Criteria) this;
+        }
     }
 
     /**

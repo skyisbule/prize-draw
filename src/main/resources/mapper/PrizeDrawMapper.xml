@@ -9,6 +9,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
     <result column="is_closed" jdbcType="INTEGER" property="isClosed" />
+    <result column="max_people" jdbcType="INTEGER" property="maxPeople" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -69,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    prize_id, uuid, title, type, create_time, expire_time, is_closed
+    prize_id, uuid, title, type, create_time, expire_time, is_closed, max_people
   </sql>
   <select id="selectByExample" parameterType="com.github.skyisbule.wxpay.domain.PrizeDrawExample" resultMap="BaseResultMap">
     select
@@ -112,10 +113,10 @@
   <insert id="insert" parameterType="com.github.skyisbule.wxpay.domain.PrizeDraw">
     insert into db_prize_draw (prize_id, uuid, title, 
       type, create_time, expire_time, 
-      is_closed)
+      is_closed, max_people)
     values (#{prizeId,jdbcType=INTEGER}, #{uuid,jdbcType=CHAR}, #{title,jdbcType=VARCHAR}, 
       #{type,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{expireTime,jdbcType=TIMESTAMP}, 
-      #{isClosed,jdbcType=INTEGER})
+      #{isClosed,jdbcType=INTEGER}, #{maxPeople,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.github.skyisbule.wxpay.domain.PrizeDraw">
     insert into db_prize_draw
@@ -141,6 +142,9 @@
       <if test="isClosed != null">
         is_closed,
       </if>
+      <if test="maxPeople != null">
+        max_people,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="prizeId != null">
@@ -163,6 +167,9 @@
       </if>
       <if test="isClosed != null">
         #{isClosed,jdbcType=INTEGER},
+      </if>
+      <if test="maxPeople != null">
+        #{maxPeople,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -196,6 +203,9 @@
       <if test="record.isClosed != null">
         is_closed = #{record.isClosed,jdbcType=INTEGER},
       </if>
+      <if test="record.maxPeople != null">
+        max_people = #{record.maxPeople,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -209,7 +219,8 @@
       type = #{record.type,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       expire_time = #{record.expireTime,jdbcType=TIMESTAMP},
-      is_closed = #{record.isClosed,jdbcType=INTEGER}
+      is_closed = #{record.isClosed,jdbcType=INTEGER},
+      max_people = #{record.maxPeople,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -235,6 +246,9 @@
       <if test="isClosed != null">
         is_closed = #{isClosed,jdbcType=INTEGER},
       </if>
+      <if test="maxPeople != null">
+        max_people = #{maxPeople,jdbcType=INTEGER},
+      </if>
     </set>
     where prize_id = #{prizeId,jdbcType=INTEGER}
   </update>
@@ -245,7 +259,8 @@
       type = #{type,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       expire_time = #{expireTime,jdbcType=TIMESTAMP},
-      is_closed = #{isClosed,jdbcType=INTEGER}
+      is_closed = #{isClosed,jdbcType=INTEGER},
+      max_people = #{maxPeople,jdbcType=INTEGER}
     where prize_id = #{prizeId,jdbcType=INTEGER}
   </update>
 </mapper>

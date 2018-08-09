@@ -27,7 +27,7 @@ public class PrizeDraw implements Serializable {
     /**
      * 创建这个抽奖的时间
      */
-    private Date createTime = new Date();
+    private Date createTime;
 
     /**
      * 若选择定时开奖，则传它进来，到期自动开奖。
@@ -37,7 +37,9 @@ public class PrizeDraw implements Serializable {
     /**
      * 是否已经结束，若结束则外人不得接着抽奖。
      */
-    private Integer isClosed = 0;
+    private Integer isClosed;
+
+    private Integer maxPeople;
 
     private static final long serialVersionUID = 1L;
 
@@ -97,6 +99,14 @@ public class PrizeDraw implements Serializable {
         this.isClosed = isClosed;
     }
 
+    public Integer getMaxPeople() {
+        return maxPeople;
+    }
+
+    public void setMaxPeople(Integer maxPeople) {
+        this.maxPeople = maxPeople;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -115,7 +125,8 @@ public class PrizeDraw implements Serializable {
             && (this.getType() == null ? other.getType() == null : this.getType().equals(other.getType()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getExpireTime() == null ? other.getExpireTime() == null : this.getExpireTime().equals(other.getExpireTime()))
-            && (this.getIsClosed() == null ? other.getIsClosed() == null : this.getIsClosed().equals(other.getIsClosed()));
+            && (this.getIsClosed() == null ? other.getIsClosed() == null : this.getIsClosed().equals(other.getIsClosed()))
+            && (this.getMaxPeople() == null ? other.getMaxPeople() == null : this.getMaxPeople().equals(other.getMaxPeople()));
     }
 
     @Override
@@ -129,6 +140,7 @@ public class PrizeDraw implements Serializable {
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getExpireTime() == null) ? 0 : getExpireTime().hashCode());
         result = prime * result + ((getIsClosed() == null) ? 0 : getIsClosed().hashCode());
+        result = prime * result + ((getMaxPeople() == null) ? 0 : getMaxPeople().hashCode());
         return result;
     }
 
@@ -145,6 +157,7 @@ public class PrizeDraw implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", expireTime=").append(expireTime);
         sb.append(", isClosed=").append(isClosed);
+        sb.append(", maxPeople=").append(maxPeople);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

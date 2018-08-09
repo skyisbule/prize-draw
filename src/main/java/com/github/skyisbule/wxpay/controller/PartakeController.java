@@ -55,7 +55,7 @@ public class PartakeController {
             authDao.updateByExampleSelective(closeKey,e);
         }
         if (prizeDraw.getType()==2){//每次插入都要看看人数是不是满了
-            int luckyNum    = partakeService.getLuckyNumByPrizeId(partake.getPrizeId());
+            int luckyNum    = prizeDraw.getMaxPeople();
             int partakedNum = partakeService.getPartakedNumByPrizeId(partake.getPrizeId());
             if (partakedNum==luckyNum-1){//这里说明这个人插入后人就满了，则直接执行开奖
                 dao.insert(partake);//把这个人插入进去后直接开
