@@ -8,6 +8,7 @@ import java.util.List;
 public class RedPecket {
 
     public static ArrayList<Integer> build(int totalMoney, int number){
+        System.out.println("红包生成任务开始：总共   "+totalMoney+"元   "+number+"个");
         ArrayList<Integer> reslut = new ArrayList<>(number);
         float total = totalMoney/100;//红包总额
         float money;
@@ -41,7 +42,7 @@ public class RedPecket {
             String temp =moneyStr.replace(".","");
             reslut.add(Integer.parseInt(temp));
         });
-
+        reslut.forEach(System.out::println);
         return reslut;
     }
 

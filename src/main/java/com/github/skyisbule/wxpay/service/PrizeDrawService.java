@@ -57,6 +57,7 @@ public class PrizeDrawService {
     }
 
     //关闭抽奖
+    @Transactional(rollbackFor = Exception.class , isolation = Isolation.REPEATABLE_READ)
     public List<Lucky> closePrize(int prizeId){
         //设置状态为为关闭
         PrizeDraw prizeDraw = new PrizeDraw();
@@ -79,8 +80,7 @@ public class PrizeDrawService {
      * 这里是关闭抽奖的处理流程
      *
      */
-    @Transactional(rollbackFor = Exception.class , isolation = Isolation.REPEATABLE_READ)
-    public List<Lucky> luckyMan(int prizeId,List<Partake> partakes,List<Award> awards){
+    private List<Lucky> luckyMan(int prizeId,List<Partake> partakes,List<Award> awards){
         PrizeDraw prizeDraw = prizeDrawDao.selectByPrimaryKey(prizeId);
 
         ArrayList<Lucky> luckyMans = new ArrayList<>();
@@ -91,6 +91,7 @@ public class PrizeDrawService {
         Integer awardSize = awards.size() - 1;
 
         if (partakes.size()==0){//说明有关闭抽奖时没人参与
+            //todo  如果有现金抽奖这里要把钱退回给发起者
             return new ArrayList<Lucky>();
         }
 
@@ -98,30 +99,34 @@ public class PrizeDrawService {
         for (Award award : awards) {
             if (award.getType()==0){//如果奖品是实物
                 for (int i = 0;i<award.getLuckyNum();i++){
-                    if (awardNow>awardSize-1) break;//这里判断下还有没有人
+                    if (awardNow>partakes.size()-1) break;//这里判断下还有没有人
                     Partake partake = partakes.get(awardNow);
                     Lucky luckyMan = new Lucky();
                     luckyMan.setAwardId(award.getAid());
                     luckyMan.setAwardNum(1);
                     this.setLuckyManInfo(partake,luckyMan);
                     luckyMans.add(luckyMan);
+                    System.out.println("幸运的人"+luckyMan.getUuid()+"  "+award.getTitle());
                     awardNow++;
                 }
             }
 
             if (award.getType()==1){//这里代表现金红包
+                ArrayList<Integer> redPackets = RedPecket.build(Integer.parseInt(award.getTitle()),award.getLuckyNum());
+                int redPacketIndex = 0;
                 for (int i =0 ;i<award.getLuckyNum();i++){
-                    if (awardNow>awardSize-1) break;//这里判断下还有没有人
-                    int redPacketIndex = 0;
-                    ArrayList<Integer> redPackets = RedPecket.build(Integer.parseInt(award.getTitle()),award.getLuckyNum());
+                    if (awardNow>partakes.size()-1) break;//这里判断下还有没有人
                     Partake partake = partakes.get(awardNow);
                     Lucky luckyMan = new Lucky();
                     luckyMan.setAwardId(award.getAid());
                     luckyMan.setAwardNum(redPackets.get(redPacketIndex));
                     this.setLuckyManInfo(partake,luckyMan);
+                    luckyMans.add(luckyMan);
+                    System.out.println("幸运的人 现金："+luckyMan.getUuid()+"  "+luckyMan.getAwardNum());
                     //这里要更新一下用户的余额，把钱打到用户账户里。
                     userSerivce.updateBalance(luckyMan.getUuid(),luckyMan.getAwardNum());
                     awardNow++;
+                    redPacketIndex++;
                 }
             }
         }
@@ -131,11 +136,15 @@ public class PrizeDrawService {
         Integer totalLuckyNum   = luckyMans.size(); //得奖的人数。。
         for (Award award : awards) totalAwardsNum+=award.getLuckyNum();
 
+        System.out.println("得奖的个数"+totalLuckyNum);
+        System.out.println("奖品的个数"+totalAwardsNum);
+
         if (totalAwardsNum>totalLuckyNum){//假设说奖品的个数比中奖人数多，需要将现金奖品退回账户。
             HashMap<Integer,Integer> luckyHashMap = new HashMap<>();
             for (Lucky luckyMan : luckyMans) { //  <奖品id，获奖的人数>;
                 if (!luckyHashMap.containsKey(luckyMan.getAwardId())){
                     luckyHashMap.put(luckyMan.getAwardId(),0);
+                    System.out.println(luckyMan);
                 }
                 Integer num = luckyHashMap.get(luckyMan.getAwardId())+1;
                 luckyHashMap.put(luckyMan.getAwardId(),num);
@@ -143,13 +152,20 @@ public class PrizeDrawService {
 
             for (Award award : awards) {
                 if (award.getType()==1){
+                    //一个bug   如果一个现金奖项根本没人领到  则这里的map会触发null Exception 所以修复一下
+                    if (!luckyHashMap.containsKey(award.getAid()))
+                        luckyHashMap.put(award.getAid(),0);
                     if (award.getLuckyNum()>luckyHashMap.get(award.getAid())){//说明没领完  要把剩下的钱退给创建抽奖的人
                         Integer realNum = 0;//实际领的钱
                         for (Lucky luckyMan : luckyMans) {
-                            realNum += luckyMan.getAwardNum();
+                            if ((int)award.getAid()==(int)luckyMan.getAwardId()){
+                                realNum += luckyMan.getAwardNum();
+                                System.out.println("当前的奖项已被领取"+realNum);
+                            }
                         }
-                        if (award.getLuckyNum()>realNum){//这里把多余的没有领的钱退回给原先的人。
-                            userSerivce.updateBalance(prizeDraw.getUuid(),award.getLuckyNum()-realNum);
+                        if (Integer.parseInt(award.getTitle()) >realNum){//这里把多余的没有领的钱退回给原先的人。
+                            System.out.print("还有这么多钱没有领：");System.out.println(Integer.parseInt(award.getTitle())-realNum);
+                            userSerivce.updateBalance(prizeDraw.getUuid(),Integer.parseInt(award.getTitle())-realNum);
                         }
                     }
                 }

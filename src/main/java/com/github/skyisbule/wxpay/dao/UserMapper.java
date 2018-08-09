@@ -10,7 +10,7 @@ public interface UserMapper {
 
     @Update("update db_user set balance = balance+ ${money} where uuid = #{uuid}")
     public void updateBalance(@Param("uuid")String uuid,
-                              @Param("mondy")Integer money);
+                              @Param("money")Integer money);
 
     long countByExample(UserExample example);
 
