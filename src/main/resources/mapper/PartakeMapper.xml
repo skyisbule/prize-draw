@@ -8,6 +8,7 @@
     <result column="is_lucky" jdbcType="INTEGER" property="isLucky" />
     <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
     <result column="head_pic" jdbcType="VARCHAR" property="headPic" />
+    <result column="form_id" jdbcType="CHAR" property="formId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    pid, uuid, prize_id, is_lucky, nick_name, head_pic
+    pid, uuid, prize_id, is_lucky, nick_name, head_pic, form_id
   </sql>
   <select id="selectByExample" parameterType="com.github.skyisbule.wxpay.domain.PartakeExample" resultMap="BaseResultMap">
     select
@@ -110,11 +111,11 @@
   </delete>
   <insert id="insert" parameterType="com.github.skyisbule.wxpay.domain.Partake">
     insert into db_partake (pid, uuid, prize_id, 
-      is_lucky, nick_name, head_pic
-      )
+      is_lucky, nick_name, head_pic, 
+      form_id)
     values (#{pid,jdbcType=INTEGER}, #{uuid,jdbcType=CHAR}, #{prizeId,jdbcType=INTEGER}, 
-      #{isLucky,jdbcType=INTEGER}, #{nickName,jdbcType=VARCHAR}, #{headPic,jdbcType=VARCHAR}
-      )
+      #{isLucky,jdbcType=INTEGER}, #{nickName,jdbcType=VARCHAR}, #{headPic,jdbcType=VARCHAR}, 
+      #{formId,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.github.skyisbule.wxpay.domain.Partake">
     insert into db_partake
@@ -137,6 +138,9 @@
       <if test="headPic != null">
         head_pic,
       </if>
+      <if test="formId != null">
+        form_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="pid != null">
@@ -156,6 +160,9 @@
       </if>
       <if test="headPic != null">
         #{headPic,jdbcType=VARCHAR},
+      </if>
+      <if test="formId != null">
+        #{formId,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -186,6 +193,9 @@
       <if test="record.headPic != null">
         head_pic = #{record.headPic,jdbcType=VARCHAR},
       </if>
+      <if test="record.formId != null">
+        form_id = #{record.formId,jdbcType=CHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -198,7 +208,8 @@
       prize_id = #{record.prizeId,jdbcType=INTEGER},
       is_lucky = #{record.isLucky,jdbcType=INTEGER},
       nick_name = #{record.nickName,jdbcType=VARCHAR},
-      head_pic = #{record.headPic,jdbcType=VARCHAR}
+      head_pic = #{record.headPic,jdbcType=VARCHAR},
+      form_id = #{record.formId,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -221,6 +232,9 @@
       <if test="headPic != null">
         head_pic = #{headPic,jdbcType=VARCHAR},
       </if>
+      <if test="formId != null">
+        form_id = #{formId,jdbcType=CHAR},
+      </if>
     </set>
     where pid = #{pid,jdbcType=INTEGER}
   </update>
@@ -230,7 +244,8 @@
       prize_id = #{prizeId,jdbcType=INTEGER},
       is_lucky = #{isLucky,jdbcType=INTEGER},
       nick_name = #{nickName,jdbcType=VARCHAR},
-      head_pic = #{headPic,jdbcType=VARCHAR}
+      head_pic = #{headPic,jdbcType=VARCHAR},
+      form_id = #{formId,jdbcType=CHAR}
     where pid = #{pid,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -33,6 +33,8 @@ public class Partake implements Serializable {
      */
     private String headPic;
 
+    private String formId;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getPid() {
@@ -83,6 +85,14 @@ public class Partake implements Serializable {
         this.headPic = headPic;
     }
 
+    public String getFormId() {
+        return formId;
+    }
+
+    public void setFormId(String formId) {
+        this.formId = formId;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -100,7 +110,8 @@ public class Partake implements Serializable {
             && (this.getPrizeId() == null ? other.getPrizeId() == null : this.getPrizeId().equals(other.getPrizeId()))
             && (this.getIsLucky() == null ? other.getIsLucky() == null : this.getIsLucky().equals(other.getIsLucky()))
             && (this.getNickName() == null ? other.getNickName() == null : this.getNickName().equals(other.getNickName()))
-            && (this.getHeadPic() == null ? other.getHeadPic() == null : this.getHeadPic().equals(other.getHeadPic()));
+            && (this.getHeadPic() == null ? other.getHeadPic() == null : this.getHeadPic().equals(other.getHeadPic()))
+            && (this.getFormId() == null ? other.getFormId() == null : this.getFormId().equals(other.getFormId()));
     }
 
     @Override
@@ -113,6 +124,7 @@ public class Partake implements Serializable {
         result = prime * result + ((getIsLucky() == null) ? 0 : getIsLucky().hashCode());
         result = prime * result + ((getNickName() == null) ? 0 : getNickName().hashCode());
         result = prime * result + ((getHeadPic() == null) ? 0 : getHeadPic().hashCode());
+        result = prime * result + ((getFormId() == null) ? 0 : getFormId().hashCode());
         return result;
     }
 
@@ -128,6 +140,7 @@ public class Partake implements Serializable {
         sb.append(", isLucky=").append(isLucky);
         sb.append(", nickName=").append(nickName);
         sb.append(", headPic=").append(headPic);
+        sb.append(", formId=").append(formId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

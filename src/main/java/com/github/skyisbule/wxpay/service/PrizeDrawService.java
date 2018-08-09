@@ -63,6 +63,7 @@ public class PrizeDrawService {
         PrizeDraw prizeDraw = new PrizeDraw();
         prizeDraw.setPrizeId(prizeId);
         prizeDraw.setIsClosed(1);
+        prizeDraw.setCreateTime(null);
         prizeDrawDao.updateByPrimaryKeySelective(prizeDraw);
         //获取参与者们
         PartakeExample partakeExample = new PartakeExample();
