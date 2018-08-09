@@ -19,6 +19,7 @@
 
     <properties>
         <weixin-java-pay.version>3.1.0</weixin-java-pay.version>
+        <weixin-java-miniapp.version>3.1.0</weixin-java-miniapp.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -43,6 +44,12 @@
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-pay</artifactId>
             <version>${weixin-java-pay.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-miniapp</artifactId>
+            <version>${weixin-java-miniapp.version}</version>
         </dependency>
 
         <dependency>
