@@ -12,6 +12,12 @@ wechat:
     #subAppId:
     #subMchId:
     keyPath: aaa
+  miniapp:
+    appid: 111
+    secret: 111
+    token: 111
+    aesKey: 111
+    msgDataFormat: JSON
 
 spring:
   profiles:
