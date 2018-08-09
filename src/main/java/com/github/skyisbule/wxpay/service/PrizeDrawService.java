@@ -5,6 +5,7 @@ import com.github.skyisbule.wxpay.dao.LuckyMapper;
 import com.github.skyisbule.wxpay.dao.PartakeMapper;
 import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
 import com.github.skyisbule.wxpay.domain.*;
+import com.github.skyisbule.wxpay.thread.MessageData;
 import com.github.skyisbule.wxpay.util.RedPecket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -177,6 +178,14 @@ public class PrizeDrawService {
 
         }
         for (Lucky lucky : luckyMans) luckyDao.insert(lucky);
+        //这里直接把抽到奖的人丢进发送模板消息的队列去消费
+        for (Lucky luckyMan : luckyMans) {
+            try {
+                MessageData.messageQueue.put(luckyMan);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return luckyMans;
     }
 
@@ -192,6 +201,7 @@ public class PrizeDrawService {
         lucky.setHeadPic(partake.getHeadPic());
         lucky.setNickName(partake.getNickName());
         lucky.setUuid(partake.getUuid());
+        lucky.setFormId(partake.getFormId());
         return lucky;
     }
 
