@@ -24,7 +24,7 @@ spring:
     active: prod
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/db_prize_draw
+    url: jdbc:mysql://127.0.0.1:3306/db_prize_draw?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
     username: root
     password: root
   thymeleaf:

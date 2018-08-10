@@ -38,6 +38,13 @@ public class PartakeController {
     @ApiOperation("添加抽奖人，参与抽奖,如果是参与广告抽奖的用户，需要额外传一个partakeKey做参与鉴权。")
     @RequestMapping("/add")
     public synchronized String add(Partake partake,String partakeKey){
+        PartakeExample et = new PartakeExample();
+        et.createCriteria()
+                .andUuidEqualTo(partake.getUuid())
+                .andPrizeIdEqualTo(partake.getPrizeId());
+        List<Partake> partakes = dao.selectByExample(et);
+        if (partakes!=null) return "您已经参加过了";
+        partake.setIsLucky(0);
         PrizeDraw prizeDraw = prizeDrawDao.selectByPrimaryKey(partake.getPrizeId());
         //先看看这个抽奖关闭了没
         if (prizeDraw.getIsClosed() ==1)

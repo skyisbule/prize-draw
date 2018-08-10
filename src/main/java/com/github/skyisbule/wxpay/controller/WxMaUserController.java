@@ -5,6 +5,8 @@ import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import com.github.binarywang.demo.wx.miniapp.utils.JsonUtils;
+import com.github.skyisbule.wxpay.dao.UserMapper;
+import com.github.skyisbule.wxpay.domain.User;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,6 +29,9 @@ public class WxMaUserController {
     @Autowired
     private WxMaService wxService;
 
+    @Autowired
+    private UserMapper userDao;
+
     /**
      * 登陆接口
      */
@@ -40,7 +45,16 @@ public class WxMaUserController {
             WxMaJscode2SessionResult session = this.wxService.getUserService().getSessionInfo(code);
             this.logger.info(session.getSessionKey());
             this.logger.info(session.getOpenid());
-            //TODO 可以增加自己的逻辑，关联业务相关数据
+            //插入用户
+
+            User user = userDao.selectByPrimaryKey(session.getOpenid());
+            if (user==null){
+                user = new User();
+                user.setBalance(0);
+                user.setUuid(session.getOpenid());
+                userDao.insert(user);
+            }
+
             return JsonUtils.toJson(session);
         } catch (WxErrorException e) {
             this.logger.error(e.getMessage(), e);
