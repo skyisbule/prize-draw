@@ -79,19 +79,21 @@ public class WxPayController implements WxPayService {
   }
 
   @RequestMapping(value = "wxpay")
-  public String pay(HttpServletRequest request, String orderNo, String subject) {
+  public String pay(String orderNo,Integer money,String openId,String userIp,
+                    String startTime,String expireTime) {
     try {
       WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-      orderRequest.setBody("充值订单");
-      orderRequest.setOutTradeNo("订单号");
-      orderRequest.setTotalFee(100);//元转成分
-      orderRequest.setOpenid("openId");
-      orderRequest.setSpbillCreateIp("userIp");
-      orderRequest.setTimeStart("yyyyMMddHHmmss");
-      orderRequest.setTimeExpire("yyyyMMddHHmmss");
+      orderRequest.setNotifyUrl("https://heartqiu.cn/pay/wx");
+      orderRequest.setBody("账户充值");
+      orderRequest.setOutTradeNo(orderNo);
+      orderRequest.setTotalFee(money);//这里传分给我  比如1块就给我传100
+      orderRequest.setOpenid(openId);
+      orderRequest.setSpbillCreateIp(userIp);
+      orderRequest.setTimeStart(startTime);//yyyyMMddHHmmss
+      orderRequest.setTimeExpire(expireTime);
       wxService.createOrder(orderRequest);
 
-      return orderRequest.toString();
+      return wxService.createOrder(orderRequest).toString();
     } catch (Exception e) {
       //log.error("微信支付失败！订单号：{},原因:{}", orderNo, e.getMessage());
       e.printStackTrace();

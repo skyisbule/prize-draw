@@ -43,6 +43,7 @@ public class PrizeDrawService {
     public Integer createPrize(PrizeDraw prizeDraw, List<Award> awards){
         Integer res;
         try {
+            prizeDraw.setIsClosed(0);
             prizeDrawDao.insert(prizeDraw);//创建抽奖
             Integer maxPrizeId = this.getMaxId();
             res = maxPrizeId;

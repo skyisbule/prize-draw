@@ -13,8 +13,8 @@ wechat:
     #subMchId:
     keyPath: aaa
   miniapp:
-    appid: 111
-    secret: 111
+    appid:
+    secret:
     token: 111
     aesKey: 111
     msgDataFormat: JSON

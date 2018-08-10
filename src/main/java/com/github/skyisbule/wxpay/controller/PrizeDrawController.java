@@ -5,6 +5,8 @@ import com.github.skyisbule.wxpay.domain.Award;
 import com.github.skyisbule.wxpay.domain.Lucky;
 import com.github.skyisbule.wxpay.domain.PrizeDraw;
 import com.github.skyisbule.wxpay.service.PrizeDrawService;
+import com.github.skyisbule.wxpay.task.CloseTask;
+import com.github.skyisbule.wxpay.thread.CloseQueue;
 import com.github.skyisbule.wxpay.vo.PrizeDrawVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,6 +46,12 @@ public class PrizeDrawController {
     public synchronized String add(@RequestBody PrizeDrawVO vo){//修改一下请求参数的接收方式
         Integer prizeId = service.createPrize(vo.prizeDraw,vo.awards);
         //todo:这里对发来的数据验证一下
+        if (vo.prizeDraw.getType()==1){//代表按时间自动开奖，需要把开奖任务打入队列
+            CloseTask task = new CloseTask();
+            task.prizeId = prizeId;
+            task.closeTime =(int) vo.prizeDraw.getExpireTime().getTime();
+            CloseQueue.add(task);
+        }
         return prizeId==0?"error":prizeId.toString();
     }
 
@@ -63,8 +71,8 @@ public class PrizeDrawController {
 
     @ApiOperation("传抽奖的id，查看抽奖信息。")
     @RequestMapping("/get-by-prize-id")
-    public PrizeDraw getById(int id){
-        return dao.selectByPrimaryKey(id);
+    public PrizeDraw getById(int prizeId){
+        return dao.selectByPrimaryKey(prizeId);
     }
 
 }

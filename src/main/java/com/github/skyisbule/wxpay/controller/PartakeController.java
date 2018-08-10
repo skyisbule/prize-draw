@@ -2,6 +2,7 @@ package com.github.skyisbule.wxpay.controller;
 
 
 import com.github.skyisbule.wxpay.dao.AdvertAuthMapper;
+import com.github.skyisbule.wxpay.dao.LuckyMapper;
 import com.github.skyisbule.wxpay.dao.PartakeMapper;
 import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
 import com.github.skyisbule.wxpay.domain.*;
@@ -31,6 +32,8 @@ public class PartakeController {
     PartakeService partakeService;
     @Autowired
     PrizeDrawService prizeDrawService;
+    @Autowired
+    LuckyMapper luckyMapper;
 
     @ApiOperation("添加抽奖人，参与抽奖,如果是参与广告抽奖的用户，需要额外传一个partakeKey做参与鉴权。")
     @RequestMapping("/add")
@@ -80,6 +83,14 @@ public class PartakeController {
         e.createCriteria()
                 .andPrizeIdEqualTo(prizeId);
         return dao.selectByExample(e);
+    }
+
+    @ApiOperation("传奖品id获取中奖人")
+    public List<Lucky> getAll(int awardId){
+        LuckyExample e = new LuckyExample();
+        e.createCriteria()
+                .andAwardIdEqualTo(awardId);
+        return luckyMapper.selectByExample(e);
     }
 
 }
