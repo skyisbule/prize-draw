@@ -85,6 +85,15 @@ public class PartakeController {
         return dao.selectByExample(e);
     }
 
+    @ApiOperation("通过用户的uuid拿到用户参加的抽奖，返回prizeid")
+    @RequestMapping("/get-partaked-by-uuid")
+    public List<Partake> getPartake(String uuid){
+        PartakeExample e = new PartakeExample();
+        e.createCriteria()
+                .andUuidEqualTo(uuid);
+        return dao.selectByExample(e);
+    }
+
     @ApiOperation("传奖品id获取中奖人")
     public List<Lucky> getAll(int awardId){
         LuckyExample e = new LuckyExample();

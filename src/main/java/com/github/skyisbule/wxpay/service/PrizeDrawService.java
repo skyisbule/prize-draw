@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PrizeDrawService {
@@ -44,6 +41,7 @@ public class PrizeDrawService {
         Integer res;
         try {
             prizeDraw.setIsClosed(0);
+            prizeDraw.setCreateTime(new Date());
             prizeDrawDao.insert(prizeDraw);//创建抽奖
             Integer maxPrizeId = this.getMaxId();
             res = maxPrizeId;
