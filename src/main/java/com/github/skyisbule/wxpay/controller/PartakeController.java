@@ -43,7 +43,7 @@ public class PartakeController {
                 .andUuidEqualTo(partake.getUuid())
                 .andPrizeIdEqualTo(partake.getPrizeId());
         List<Partake> partakes = dao.selectByExample(et);
-        if (partakes!=null) return "您已经参加过了";
+        if (partakes.size()>0) return "您已经参加过了";
         partake.setIsLucky(0);
         PrizeDraw prizeDraw = prizeDrawDao.selectByPrimaryKey(partake.getPrizeId());
         //先看看这个抽奖关闭了没
@@ -102,10 +102,10 @@ public class PartakeController {
     }
 
     @ApiOperation("传奖品id获取中奖人")
-    public List<Lucky> getAll(int awardId){
+    public List<Lucky> getAll(List<Integer> awardIds){
         LuckyExample e = new LuckyExample();
         e.createCriteria()
-                .andAwardIdEqualTo(awardId);
+                .andAwardIdIn(awardIds);
         return luckyMapper.selectByExample(e);
     }
 

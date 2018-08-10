@@ -4,6 +4,7 @@ import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
 import com.github.skyisbule.wxpay.domain.Award;
 import com.github.skyisbule.wxpay.domain.Lucky;
 import com.github.skyisbule.wxpay.domain.PrizeDraw;
+import com.github.skyisbule.wxpay.domain.PrizeDrawExample;
 import com.github.skyisbule.wxpay.service.PrizeDrawService;
 import com.github.skyisbule.wxpay.task.CloseTask;
 import com.github.skyisbule.wxpay.thread.CloseQueue;
@@ -63,6 +64,16 @@ public class PrizeDrawController {
         }
         return service.closePrize(prizeId);
     }
+
+    @ApiOperation("通过uuid获取用户所有发起的抽奖")
+    @RequestMapping("/get-prize-by-uuid")
+    public List<PrizeDraw> getPrizeDrawByUUid(String uuid){
+        PrizeDrawExample e = new PrizeDrawExample();
+        e.createCriteria()
+                .andUuidEqualTo(uuid);
+        return dao.selectByExample(e);
+    }
+
 
     @ApiOperation("查看一个抽奖是否已经关闭")
     public String isClosed(int prizeId){
