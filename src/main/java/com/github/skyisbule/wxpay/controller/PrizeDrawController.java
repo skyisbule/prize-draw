@@ -47,6 +47,10 @@ public class PrizeDrawController {
     public synchronized String add(@RequestBody PrizeDrawVO vo){//修改一下请求参数的接收方式
         Integer prizeId = service.createPrize(vo.prizeDraw,vo.awards);
         //todo:这里对发来的数据验证一下
+        for (Award award : vo.awards) {
+            if (award.getLuckyNum()<1)
+                return "奖品的数目不合法,请重新输入.";
+        }
         if (vo.prizeDraw.getType()==1){//代表按时间自动开奖，需要把开奖任务打入队列
             CloseTask task = new CloseTask();
             task.prizeId = prizeId;
