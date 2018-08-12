@@ -22,10 +22,10 @@ public class AwardController {
 
     @ApiOperation("通过id拿到抽奖的奖品信息")
     @RequestMapping("/get-by-prize-id")
-    public List<Award> getByPrizeId(Integer pid){
+    public List<Award> getByPrizeId(Integer prizeId){
         AwardExample e = new AwardExample();
         e.createCriteria()
-                .andPrizeIdEqualTo(pid);
+                .andPrizeIdEqualTo(prizeId);
         return awardDao.selectByExample(e);
     }
 

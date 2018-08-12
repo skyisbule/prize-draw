@@ -113,11 +113,11 @@ public class PartakeController {
 
     @ApiOperation("传prizeid，获取开奖后的信息，包括奖品信息以及获奖人")
     @RequestMapping("/get-awards-lucky")
-    public Map<Award,List<Lucky>> getAwardsAndLuckies(int prizedId){
+    public Map<Award,List<Lucky>> getAwardsAndLuckies(int prizeId){
         HashMap<Award,List<Lucky>> res = new HashMap<>();
         AwardExample e = new AwardExample();
         e.createCriteria()
-                .andPrizeIdEqualTo(prizedId);
+                .andPrizeIdEqualTo(prizeId);
         List<Award> awards = awardDao.selectByExample(e);
         for (Award award : awards){
             LuckyExample luckyExample = new LuckyExample();
