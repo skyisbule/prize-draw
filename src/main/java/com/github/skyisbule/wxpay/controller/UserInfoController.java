@@ -3,7 +3,6 @@ package com.github.skyisbule.wxpay.controller;
 import com.github.skyisbule.wxpay.dao.UserMapper;
 import com.github.skyisbule.wxpay.domain.User;
 import io.swagger.annotations.ApiOperation;
-import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
