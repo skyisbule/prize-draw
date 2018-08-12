@@ -1,10 +1,7 @@
 package com.github.skyisbule.wxpay.controller;
 
 
-import com.github.skyisbule.wxpay.dao.AdvertAuthMapper;
-import com.github.skyisbule.wxpay.dao.LuckyMapper;
-import com.github.skyisbule.wxpay.dao.PartakeMapper;
-import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
+import com.github.skyisbule.wxpay.dao.*;
 import com.github.skyisbule.wxpay.domain.*;
 import com.github.skyisbule.wxpay.service.PartakeService;
 import com.github.skyisbule.wxpay.service.PrizeDrawService;
@@ -15,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api("参与抽奖的接口")
 @RestController
@@ -34,6 +33,8 @@ public class PartakeController {
     PrizeDrawService prizeDrawService;
     @Autowired
     LuckyMapper luckyMapper;
+    @Autowired
+    AwardMapper awardDao;
 
     @ApiOperation("添加抽奖人，参与抽奖,如果是参与广告抽奖的用户，需要额外传一个partakeKey做参与鉴权。")
     @RequestMapping("/add")
@@ -102,11 +103,29 @@ public class PartakeController {
     }
 
     @ApiOperation("传奖品id获取中奖人")
+    @RequestMapping("/get-lucky-by-awardIds")
     public List<Lucky> getAll(List<Integer> awardIds){
         LuckyExample e = new LuckyExample();
         e.createCriteria()
                 .andAwardIdIn(awardIds);
         return luckyMapper.selectByExample(e);
+    }
+
+    @ApiOperation("传prizeid，获取开奖后的信息，包括奖品信息以及获奖人")
+    @RequestMapping("/get-awards-lucky")
+    public Map<Award,List<Lucky>> getAwardsAndLuckies(int prizedId){
+        HashMap<Award,List<Lucky>> res = new HashMap<>();
+        AwardExample e = new AwardExample();
+        e.createCriteria()
+                .andPrizeIdEqualTo(prizedId);
+        List<Award> awards = awardDao.selectByExample(e);
+        for (Award award : awards){
+            LuckyExample luckyExample = new LuckyExample();
+            luckyExample.createCriteria()
+                    .andAwardIdEqualTo(award.getAid());
+            res.put(award,luckyMapper.selectByExample(luckyExample));
+        }
+        return res;
     }
 
 }
