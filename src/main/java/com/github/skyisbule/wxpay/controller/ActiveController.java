@@ -2,12 +2,15 @@ package com.github.skyisbule.wxpay.controller;
 
 import com.github.skyisbule.wxpay.dao.ActiveMapper;
 import com.github.skyisbule.wxpay.domain.Active;
+import com.github.skyisbule.wxpay.domain.ActiveExample;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 这里的流程 暂定
@@ -37,4 +40,18 @@ public class ActiveController {
         return dao.deleteByPrimaryKey(activeId)==1?"success":"error";
     }
 
+    @ApiOperation("获得活动信息")
+    @RequestMapping("/get-all")
+    public List<Active> get(){
+        ActiveExample e = new ActiveExample();
+        e.setOrderByClause("acid desc");
+        e.createCriteria();
+        return dao.selectByExample(e);
+    }
+
+    @ApiOperation("通过id获得活动的详情信息")
+    @RequestMapping("/get-by-id")
+    public Active getId(int activeId){
+        return dao.selectByPrimaryKey(activeId);
+    }
 }

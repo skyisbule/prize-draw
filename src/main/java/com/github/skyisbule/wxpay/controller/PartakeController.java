@@ -5,6 +5,7 @@ import com.github.skyisbule.wxpay.dao.*;
 import com.github.skyisbule.wxpay.domain.*;
 import com.github.skyisbule.wxpay.service.PartakeService;
 import com.github.skyisbule.wxpay.service.PrizeDrawService;
+import com.github.skyisbule.wxpay.vo.LuckyResVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -113,17 +115,20 @@ public class PartakeController {
 
     @ApiOperation("传prizeid，获取开奖后的信息，包括奖品信息以及获奖人")
     @RequestMapping("/get-awards-lucky")
-    public Map<Award,List<Lucky>> getAwardsAndLuckies(int prizeId){
-        HashMap<Award,List<Lucky>> res = new HashMap<>();
+    public LinkedList<LuckyResVO> getAwardsAndLuckies(int prizeId){
+        LinkedList<LuckyResVO> res = new LinkedList<>();
         AwardExample e = new AwardExample();
         e.createCriteria()
                 .andPrizeIdEqualTo(prizeId);
         List<Award> awards = awardDao.selectByExample(e);
         for (Award award : awards){
+            LuckyResVO vo = new LuckyResVO();
+            vo.award = award;
             LuckyExample luckyExample = new LuckyExample();
             luckyExample.createCriteria()
                     .andAwardIdEqualTo(award.getAid());
-            res.put(award,luckyMapper.selectByExample(luckyExample));
+            vo.luckies = luckyMapper.selectByExample(luckyExample);
+            res.add(vo);
         }
         return res;
     }
