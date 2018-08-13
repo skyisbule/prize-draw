@@ -2,6 +2,7 @@ package com.github.skyisbule.wxpay;
 
 import cn.hutool.http.HttpRequest;
 import com.github.skyisbule.wxpay.auth.AuthKeyCheck;
+import com.github.skyisbule.wxpay.thread.CloseThread;
 import com.spring4all.swagger.EnableSwagger2Doc;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -21,6 +22,7 @@ public class WxPayDemoApplication extends SpringBootServletInitializer {
       String result = HttpRequest.post("http://127.0.0.1/authCheck/init")
               .execute()
               .body();
+      new CloseThread().start();
   }
 
   @Override

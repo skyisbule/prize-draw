@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -88,6 +89,25 @@ public class PrizeDrawController {
     @RequestMapping("/get-by-prize-id")
     public PrizeDraw getById(int prizeId){
         return dao.selectByPrimaryKey(prizeId);
+    }
+
+    @GetMapping("/init-time-task")
+    public String initTimeTask(){
+        PrizeDrawExample e = new PrizeDrawExample();
+        e.createCriteria()
+                .andTypeEqualTo(1)
+                .andIsClosedEqualTo(0);
+        List<PrizeDraw> prizeDraws = dao.selectByExample(e);
+        for (PrizeDraw prizeDraw : prizeDraws) {
+            System.out.println("检测到定时任务：prizeId  "+prizeDraw.getPrizeId()+" title:"+prizeDraw.getTitle());
+            CloseTask task = new CloseTask();
+            task.prizeId   = prizeDraw.getPrizeId();
+            String time    = String.valueOf(prizeDraw.getExpireTime().getTime()).substring(0,10);
+            task.closeTime = Integer.parseInt(time);
+            CloseQueue.add(task);
+        }
+        CloseQueue.show();
+        return "ok";
     }
 
 }
