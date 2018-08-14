@@ -1,6 +1,7 @@
 package com.github.skyisbule.wxpay.service;
 
 import com.github.skyisbule.wxpay.dao.UserMapper;
+import com.github.skyisbule.wxpay.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,4 +16,11 @@ public class UserSerivce {
         userDao.updateBalance(uuid,crash);
     }
 
+    //拿到用户的余额
+    public synchronized Integer getUserBalance(String uuid){
+        User user = userDao.selectByPrimaryKey(uuid);
+        if (user==null)
+            return 0;
+        return user.getBalance();
+    }
 }

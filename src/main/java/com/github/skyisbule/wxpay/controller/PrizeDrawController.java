@@ -6,6 +6,7 @@ import com.github.skyisbule.wxpay.domain.Lucky;
 import com.github.skyisbule.wxpay.domain.PrizeDraw;
 import com.github.skyisbule.wxpay.domain.PrizeDrawExample;
 import com.github.skyisbule.wxpay.service.PrizeDrawService;
+import com.github.skyisbule.wxpay.service.UserSerivce;
 import com.github.skyisbule.wxpay.task.CloseTask;
 import com.github.skyisbule.wxpay.thread.CloseQueue;
 import com.github.skyisbule.wxpay.vo.PrizeDrawVO;
@@ -34,6 +35,8 @@ public class PrizeDrawController {
     @Autowired
     PrizeDrawService service;
     @Autowired
+    UserSerivce userSerivce;
+    @Autowired
     PrizeDrawMapper dao;
 
     /**
@@ -46,11 +49,21 @@ public class PrizeDrawController {
     @ApiOperation(value = "创建一个抽奖，传抽奖信息以及，List<award>，使用json格式，例如:{\"PrizeDraw\":{xxx},\"awards\":[{xxx},{xxxx},{xxx}]}")
     @RequestMapping("/add")
     public synchronized String add(@RequestBody PrizeDrawVO vo){//修改一下请求参数的接收方式
-        Integer prizeId = service.createPrize(vo.prizeDraw,vo.awards);
         //todo:这里对发来的数据验证一下
+        int totalCrash = 0; //代表这个抽奖总共需要送多少钱
         for (Award award : vo.awards) {
             if (award.getLuckyNum()<1)
                 return "奖品的数目不合法,请重新输入.";
+            if (award.getType()==1)
+                totalCrash += Integer.parseInt(award.getTitle());//记录抽奖总额
+        }
+        //这里验证一下用户的余额够不够支付现金红包
+        if (totalCrash>userSerivce.getUserBalance(vo.prizeDraw.getUuid())){
+            return "用户现金不足哦:(";
+        }
+        Integer prizeId = service.createPrize(vo.prizeDraw,vo.awards);
+        if (prizeId!=0){//代表创建成功了  开始扣除用户的余额
+            userSerivce.updateBalance(vo.prizeDraw.getUuid(),-totalCrash);
         }
         if (vo.prizeDraw.getType()==1){//代表按时间自动开奖，需要把开奖任务打入队列
             CloseTask task = new CloseTask();
