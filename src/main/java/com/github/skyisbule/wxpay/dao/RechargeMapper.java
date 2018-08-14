@@ -10,7 +10,7 @@ public interface RechargeMapper {
 
     int deleteByExample(RechargeExample example);
 
-    int deleteByPrimaryKey(Integer rid);
+    int deleteByPrimaryKey(String rid);
 
     int insert(Recharge record);
 
@@ -18,7 +18,7 @@ public interface RechargeMapper {
 
     List<Recharge> selectByExample(RechargeExample example);
 
-    Recharge selectByPrimaryKey(Integer rid);
+    Recharge selectByPrimaryKey(String rid);
 
     int updateByExampleSelective(@Param("record") Recharge record, @Param("example") RechargeExample example);
 

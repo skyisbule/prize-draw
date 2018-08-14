@@ -9,9 +9,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.request.*;
+import com.github.skyisbule.wxpay.dao.RechargeMapper;
+import com.github.skyisbule.wxpay.dao.UserMapper;
+import com.github.skyisbule.wxpay.domain.Recharge;
+import com.github.skyisbule.wxpay.domain.RechargeExample;
+import com.github.skyisbule.wxpay.exception.NullOrderException;
+import com.github.skyisbule.wxpay.service.UserSerivce;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,6 +67,7 @@ import com.github.binarywang.wxpay.service.WxPayService;
  *
  * @author Binary Wang
  */
+@Api("微信支付")
 @RestController
 @RequestMapping("/pay")
 public class WxPayController implements WxPayService {
@@ -64,6 +75,12 @@ public class WxPayController implements WxPayService {
 
   @Resource(name = "wxPayService")
   private WxPayService wxService;
+
+  @Autowired
+  RechargeMapper rechargeMapper;
+  @Autowired
+  UserSerivce userSerivce;
+
 
   /**
    * 统一下单(详见https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1)
@@ -73,16 +90,22 @@ public class WxPayController implements WxPayService {
    * @param request 请求对象，注意一些参数如appid、mchid等不用设置，方法内会自动从配置对象中获取到（前提是对应配置中已经设置）
    */
   @Override
-  @PostMapping("/unifiedOrder")
+  //@PostMapping("/unifiedOrder")
   public WxPayUnifiedOrderResult unifiedOrder(@RequestBody WxPayUnifiedOrderRequest request) throws WxPayException {
     return this.wxService.unifiedOrder(request);
   }
 
   @RequestMapping(value = "wxpay")
-  public String pay(String orderNo,Integer money,String openId,String userIp,
-                    String startTime,String expireTime) {
+  @ApiOperation("微信支付的api")
+  public String pay(@ApiParam("订单号") String orderNo,
+                    @ApiParam("订单金额，单位为分") Integer money,
+                    @ApiParam("用户的openid")String openId,
+                    @ApiParam("用户的IP，16位字符串")String userIp,
+                    @ApiParam("订单生成时间，格式为yyyyMMddHHmmss，如2009年12月25日9点10分10秒表示为20091225091010。")String startTime,
+                    @ApiParam("订单失效时间,在上述时间上加20分钟即可")String expireTime) {
     try {
       WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
+      orderRequest.setTradeType("JSAPI");
       orderRequest.setNotifyUrl("https://heartqiu.cn/pay/wx");
       orderRequest.setBody("账户充值");
       orderRequest.setOutTradeNo(orderNo);
@@ -92,7 +115,10 @@ public class WxPayController implements WxPayService {
       orderRequest.setTimeStart(startTime);//yyyyMMddHHmmss
       orderRequest.setTimeExpire(expireTime);
       wxService.createOrder(orderRequest);
-
+      //走到这里说明创建订单成功  把订单插入数据库
+      Recharge recharge = new Recharge();
+      recharge.setMoney(money);recharge.setTime(new Date());recharge.setUuid(openId);recharge.setStatus(0);
+      rechargeMapper.insert(recharge);
       return wxService.createOrder(orderRequest).toString();
     } catch (Exception e) {
       //log.error("微信支付失败！订单号：{},原因:{}", orderNo, e.getMessage());
@@ -109,8 +135,21 @@ public class WxPayController implements WxPayService {
       // 结果正确
       String orderId = result.getOutTradeNo();
       String tradeNo = result.getTransactionId();
-      //String totalFee = WxPayBaseResult.feeToYuan(result.getTotalFee());
-      //自己处理订单的业务逻辑，需要判断订单是否已经支付过，否则可能会重复调用
+      Integer totalFee = result.getCashFee();
+      //这里开始处理我的业务逻辑
+      Recharge recharge = rechargeMapper.selectByPrimaryKey(orderId);
+      if (recharge==null)
+        throw new NullOrderException("未查询到订单");
+      if ((int)recharge.getMoney()==totalFee){
+        recharge.setTime(new Date());
+        recharge.setStatus(1);
+        rechargeMapper.updateByPrimaryKey(recharge);//更新订单状态
+        //更新用户的余额
+        userSerivce.updateBalance(recharge.getUuid(),totalFee);
+      }else {
+        throw new NullOrderException("订单金额与实际金额不符合");
+      }
+      //处理结束
       return WxPayNotifyResponse.success("处理成功!");
     } catch (Exception e) {
       //log.error("微信回调结果异常,异常原因{}", e.getMessage());
@@ -135,7 +174,7 @@ public class WxPayController implements WxPayService {
    * @param outTradeNo    商户系统内部的订单号，当没提供transactionId时需要传这个。
    */
   @Override
-  @GetMapping("/queryOrder")
+  //@GetMapping("/queryOrder")
   public WxPayOrderQueryResult queryOrder(@RequestParam(required = false) String transactionId,
                                           @RequestParam(required = false) String outTradeNo)
       throws WxPayException {
@@ -184,7 +223,7 @@ public class WxPayController implements WxPayService {
    * @return 退款操作结果
    */
   @Override
-  @PostMapping("/refund")
+  //@PostMapping("/refund")
   public WxPayRefundResult refund(@RequestBody WxPayRefundRequest request) throws WxPayException {
     return this.wxService.refund(request);
   }
@@ -207,7 +246,7 @@ public class WxPayController implements WxPayService {
    * @return 退款信息
    */
   @Override
-  @GetMapping("/refundQuery")
+ // @GetMapping("/refundQuery")
   public WxPayRefundQueryResult refundQuery(@RequestParam(required = false) String transactionId,
                                             @RequestParam(required = false) String outTradeNo,
                                             @RequestParam(required = false) String outRefundNo,
@@ -221,7 +260,7 @@ public class WxPayController implements WxPayService {
    * TODO 此方法需要改造，根据实际需要返回com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse对象
    */
   @Override
-  @PostMapping("/parseOrderNotifyResult")
+  //@PostMapping("/parseOrderNotifyResult")
   public WxPayOrderNotifyResult parseOrderNotifyResult(@RequestBody String xmlData) throws WxPayException {
     return this.wxService.parseOrderNotifyResult(xmlData);
   }
@@ -230,7 +269,7 @@ public class WxPayController implements WxPayService {
    * TODO 此方法需要改造，根据实际需要返回com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse对象
    */
   @Override
-  @PostMapping("/parseRefundNotifyResult")
+  //@PostMapping("/parseRefundNotifyResult")
   public WxPayRefundNotifyResult parseRefundNotifyResult(@RequestBody String xmlData) throws WxPayException {
     return this.wxService.parseRefundNotifyResult(xmlData);
   }
@@ -239,7 +278,7 @@ public class WxPayController implements WxPayService {
    * TODO 此方法需要改造，根据实际需要返回所需对象
    */
   @Override
-  @PostMapping("/parseScanPayNotifyResult")
+  //@PostMapping("/parseScanPayNotifyResult")
   public WxScanPayNotifyResult parseScanPayNotifyResult(String xmlData) throws WxPayException {
     return this.wxService.parseScanPayNotifyResult(xmlData);
   }

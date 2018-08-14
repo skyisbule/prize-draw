@@ -7,7 +7,10 @@ import java.util.Date;
  * @author 
  */
 public class Recharge implements Serializable {
-    private Integer rid;
+    /**
+     * 订单id
+     */
+    private String rid;
 
     /**
      * 用户id
@@ -20,17 +23,22 @@ public class Recharge implements Serializable {
     private Integer money;
 
     /**
-     * 充值时间
+     * 下单时间
      */
     private Date time;
 
+    /**
+     * 订单状态 0未确认 1已确认 2取消
+     */
+    private Integer status;
+
     private static final long serialVersionUID = 1L;
 
-    public Integer getRid() {
+    public String getRid() {
         return rid;
     }
 
-    public void setRid(Integer rid) {
+    public void setRid(String rid) {
         this.rid = rid;
     }
 
@@ -58,6 +66,14 @@ public class Recharge implements Serializable {
         this.time = time;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -73,7 +89,8 @@ public class Recharge implements Serializable {
         return (this.getRid() == null ? other.getRid() == null : this.getRid().equals(other.getRid()))
             && (this.getUuid() == null ? other.getUuid() == null : this.getUuid().equals(other.getUuid()))
             && (this.getMoney() == null ? other.getMoney() == null : this.getMoney().equals(other.getMoney()))
-            && (this.getTime() == null ? other.getTime() == null : this.getTime().equals(other.getTime()));
+            && (this.getTime() == null ? other.getTime() == null : this.getTime().equals(other.getTime()))
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
     }
 
     @Override
@@ -84,6 +101,7 @@ public class Recharge implements Serializable {
         result = prime * result + ((getUuid() == null) ? 0 : getUuid().hashCode());
         result = prime * result + ((getMoney() == null) ? 0 : getMoney().hashCode());
         result = prime * result + ((getTime() == null) ? 0 : getTime().hashCode());
+        result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         return result;
     }
 
@@ -97,6 +115,7 @@ public class Recharge implements Serializable {
         sb.append(", uuid=").append(uuid);
         sb.append(", money=").append(money);
         sb.append(", time=").append(time);
+        sb.append(", status=").append(status);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

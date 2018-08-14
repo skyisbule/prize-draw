@@ -2,10 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.github.skyisbule.wxpay.dao.RechargeMapper">
   <resultMap id="BaseResultMap" type="com.github.skyisbule.wxpay.domain.Recharge">
-    <id column="rid" jdbcType="INTEGER" property="rid" />
+    <id column="rid" jdbcType="CHAR" property="rid" />
     <result column="uuid" jdbcType="CHAR" property="uuid" />
     <result column="money" jdbcType="INTEGER" property="money" />
     <result column="time" jdbcType="TIMESTAMP" property="time" />
+    <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -66,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    rid, uuid, money, time
+    rid, uuid, money, time, status
   </sql>
   <select id="selectByExample" parameterType="com.github.skyisbule.wxpay.domain.RechargeExample" resultMap="BaseResultMap">
     select
@@ -90,15 +91,15 @@
       </if>
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from db_recharge
-    where rid = #{rid,jdbcType=INTEGER}
+    where rid = #{rid,jdbcType=CHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from db_recharge
-    where rid = #{rid,jdbcType=INTEGER}
+    where rid = #{rid,jdbcType=CHAR}
   </delete>
   <delete id="deleteByExample" parameterType="com.github.skyisbule.wxpay.domain.RechargeExample">
     delete from db_recharge
@@ -107,10 +108,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.github.skyisbule.wxpay.domain.Recharge">
-    insert into db_recharge (rid, uuid, money, 
-      time)
-    values (#{rid,jdbcType=INTEGER}, #{uuid,jdbcType=CHAR}, #{money,jdbcType=INTEGER}, 
-      #{time,jdbcType=TIMESTAMP})
+    insert into db_recharge (rid, uuid, money, time, 
+      status)
+    values (#{rid,jdbcType=CHAR}, #{uuid,jdbcType=CHAR}, #{money,jdbcType=INTEGER}, #{time,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.github.skyisbule.wxpay.domain.Recharge">
     insert into db_recharge
@@ -127,10 +128,13 @@
       <if test="time != null">
         time,
       </if>
+      <if test="status != null">
+        status,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="rid != null">
-        #{rid,jdbcType=INTEGER},
+        #{rid,jdbcType=CHAR},
       </if>
       <if test="uuid != null">
         #{uuid,jdbcType=CHAR},
@@ -140,6 +144,9 @@
       </if>
       <if test="time != null">
         #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -153,7 +160,7 @@
     update db_recharge
     <set>
       <if test="record.rid != null">
-        rid = #{record.rid,jdbcType=INTEGER},
+        rid = #{record.rid,jdbcType=CHAR},
       </if>
       <if test="record.uuid != null">
         uuid = #{record.uuid,jdbcType=CHAR},
@@ -164,6 +171,9 @@
       <if test="record.time != null">
         time = #{record.time,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -171,10 +181,11 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update db_recharge
-    set rid = #{record.rid,jdbcType=INTEGER},
+    set rid = #{record.rid,jdbcType=CHAR},
       uuid = #{record.uuid,jdbcType=CHAR},
       money = #{record.money,jdbcType=INTEGER},
-      time = #{record.time,jdbcType=TIMESTAMP}
+      time = #{record.time,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -191,14 +202,18 @@
       <if test="time != null">
         time = #{time,jdbcType=TIMESTAMP},
       </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
     </set>
-    where rid = #{rid,jdbcType=INTEGER}
+    where rid = #{rid,jdbcType=CHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.github.skyisbule.wxpay.domain.Recharge">
     update db_recharge
     set uuid = #{uuid,jdbcType=CHAR},
       money = #{money,jdbcType=INTEGER},
-      time = #{time,jdbcType=TIMESTAMP}
-    where rid = #{rid,jdbcType=INTEGER}
+      time = #{time,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER}
+    where rid = #{rid,jdbcType=CHAR}
   </update>
 </mapper>
