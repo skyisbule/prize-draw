@@ -55,7 +55,7 @@ public class PrizeDrawController {
         if (vo.prizeDraw.getType()==1){//代表按时间自动开奖，需要把开奖任务打入队列
             CloseTask task = new CloseTask();
             task.prizeId = prizeId;
-            task.closeTime =(int) vo.prizeDraw.getExpireTime().getTime();
+            task.closeTime = Integer.parseInt(String.valueOf(vo.prizeDraw.getExpireTime().getTime()).substring(0,10));
             CloseQueue.add(task);
         }
         return prizeId==0?"error":prizeId.toString();

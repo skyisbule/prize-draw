@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Api("参与抽奖的接口")
 @RestController
@@ -49,6 +46,8 @@ public class PartakeController {
         if (partakes.size()>0) return "您已经参加过了";
         partake.setIsLucky(0);
         PrizeDraw prizeDraw = prizeDrawDao.selectByPrimaryKey(partake.getPrizeId());
+        if (prizeDraw==null)
+            return "您参与的抽奖不存在:)";
         //先看看这个抽奖关闭了没
         if (prizeDraw.getIsClosed() ==1)
             return "抽奖已关闭了:(";
@@ -95,13 +94,20 @@ public class PartakeController {
         return dao.selectByExample(e);
     }
 
-    @ApiOperation("通过用户的uuid拿到用户参加的抽奖，返回prizeid")
+    @ApiOperation("通过用户的uuid拿到用户参加过的抽奖")
     @RequestMapping("/get-partaked-by-uuid")
-    public List<Partake> getPartake(String uuid){
+    public List<PrizeDraw> getPartake(String uuid){
         PartakeExample e = new PartakeExample();
         e.createCriteria()
                 .andUuidEqualTo(uuid);
-        return dao.selectByExample(e);
+        List<Integer> prizeDrawIds = new ArrayList<>();
+        for (Partake partake : dao.selectByExample(e)) {
+            prizeDrawIds.add(partake.getPrizeId());
+        }
+        PrizeDrawExample pe = new PrizeDrawExample();
+        e.createCriteria()
+                .andPrizeIdIn(prizeDrawIds);
+        return prizeDrawDao.selectByExample(pe);
     }
 
     @ApiOperation("传奖品id获取中奖人")
