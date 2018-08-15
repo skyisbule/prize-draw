@@ -3,6 +3,7 @@ package com.github.skyisbule.wxpay.controller;
 import com.github.skyisbule.wxpay.dao.AwardMapper;
 import com.github.skyisbule.wxpay.domain.Award;
 import com.github.skyisbule.wxpay.domain.AwardExample;
+import com.github.skyisbule.wxpay.util.NumberUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,14 @@ public class AwardController {
         AwardExample e = new AwardExample();
         e.createCriteria()
                 .andPrizeIdEqualTo(prizeId);
-        return awardDao.selectByExample(e);
+        List<Award> awards = awardDao.selectByExample(e);
+        for (Award award : awards) {
+            if (award.getType()==1){//现金抽奖
+                String yuan = NumberUtil.fen2yuan(award.getTitle());
+                award.setTitle("现金红包："+yuan+"元");
+            }
+        }
+        return awards;
     }
 
 }

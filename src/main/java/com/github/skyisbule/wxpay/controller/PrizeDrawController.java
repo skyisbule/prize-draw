@@ -39,6 +39,23 @@ public class PrizeDrawController {
     @Autowired
     PrizeDrawMapper dao;
 
+    private Integer StringfloatToInt(String fee){
+        System.out.println(fee);
+        if (fee.indexOf('.')<1)
+            return Integer.parseInt(fee);
+        fee = fee.replace("-","");
+        String start = fee.substring(0,fee.indexOf('.'));
+        if (Integer.parseInt(start)>0){//说明总额大于0 起码是1块。。。那么直接删掉小数点就行了
+            return Integer.parseInt(fee.replace(".",""));
+        }else {//小于0  那么代表是几毛几分的格式
+            fee = fee.substring(fee.indexOf('.')+1,fee.length());
+            if(fee.startsWith("0")){
+                fee = fee.substring(fee.length()-1,fee.length());
+            }
+            return Integer.parseInt(fee);
+        }
+    }
+
     /**
      * 这里的处理流程
      * 获取抽奖信息以及奖品信息
@@ -54,8 +71,10 @@ public class PrizeDrawController {
         for (Award award : vo.awards) {
             if (award.getLuckyNum()<1)
                 return "奖品的数目不合法,请重新输入.";
-            if (award.getType()==1)
+            if (award.getType()==1) {//这里前端拒绝传分为单位，所以这里需要改一下
+                award.setTitle(this.StringfloatToInt(award.getTitle()).toString());
                 totalCrash += Integer.parseInt(award.getTitle());//记录抽奖总额
+            }
         }
         //这里验证一下用户的余额够不够支付现金红包
         if (totalCrash>userSerivce.getUserBalance(vo.prizeDraw.getUuid())){

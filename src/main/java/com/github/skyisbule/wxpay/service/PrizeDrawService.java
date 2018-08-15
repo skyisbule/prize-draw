@@ -6,6 +6,7 @@ import com.github.skyisbule.wxpay.dao.PartakeMapper;
 import com.github.skyisbule.wxpay.dao.PrizeDrawMapper;
 import com.github.skyisbule.wxpay.domain.*;
 import com.github.skyisbule.wxpay.thread.MessageData;
+import com.github.skyisbule.wxpay.util.NumberUtil;
 import com.github.skyisbule.wxpay.util.RedPecket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -183,6 +184,13 @@ public class PrizeDrawService {
                 MessageData.messageQueue.put(luckyMan);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+        //这里对返回的award 也就是奖品处理一下
+        for (Award award : awards) {
+            if (award.getType()==1){//现金抽奖
+                String yuan = NumberUtil.fen2yuan(award.getTitle());
+                award.setTitle("现金红包："+yuan);
             }
         }
         return luckyMans;

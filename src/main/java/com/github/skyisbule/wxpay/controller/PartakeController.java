@@ -5,6 +5,7 @@ import com.github.skyisbule.wxpay.dao.*;
 import com.github.skyisbule.wxpay.domain.*;
 import com.github.skyisbule.wxpay.service.PartakeService;
 import com.github.skyisbule.wxpay.service.PrizeDrawService;
+import com.github.skyisbule.wxpay.util.NumberUtil;
 import com.github.skyisbule.wxpay.vo.LuckyResVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -128,6 +129,10 @@ public class PartakeController {
                 .andPrizeIdEqualTo(prizeId);
         List<Award> awards = awardDao.selectByExample(e);
         for (Award award : awards){
+            if (award.getType()==1){//现金抽奖 额外处理
+                String yuan = NumberUtil.fen2yuan(award.getTitle());
+                award.setTitle("现金红包："+yuan+"元");
+            }
             LuckyResVO vo = new LuckyResVO();
             vo.award = award;
             LuckyExample luckyExample = new LuckyExample();
