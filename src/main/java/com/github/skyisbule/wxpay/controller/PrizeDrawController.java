@@ -42,7 +42,9 @@ public class PrizeDrawController {
     private Integer StringfloatToInt(String fee){
         System.out.println(fee);
         if (fee.indexOf('.')<1)
-            return Integer.parseInt(fee);
+            return Integer.parseInt(fee+"00");
+        if (fee.length()-fee.indexOf('.')==2)
+            fee =fee +"0";
         fee = fee.replace("-","");
         String start = fee.substring(0,fee.indexOf('.'));
         if (Integer.parseInt(start)>0){//说明总额大于0 起码是1块。。。那么直接删掉小数点就行了
