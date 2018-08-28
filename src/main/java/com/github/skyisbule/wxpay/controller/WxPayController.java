@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.request.*;
+import com.github.skyisbule.wxpay.dao.GetMoneyMapper;
 import com.github.skyisbule.wxpay.dao.RechargeMapper;
 import com.github.skyisbule.wxpay.dao.UserMapper;
-import com.github.skyisbule.wxpay.domain.Recharge;
-import com.github.skyisbule.wxpay.domain.RechargeExample;
+import com.github.skyisbule.wxpay.domain.*;
 import com.github.skyisbule.wxpay.exception.NullOrderException;
 import com.github.skyisbule.wxpay.service.UserSerivce;
 import io.swagger.annotations.Api;
@@ -69,7 +69,7 @@ import com.github.binarywang.wxpay.service.WxPayService;
  */
 @Api("微信支付")
 @RestController
-@RequestMapping("/pay")
+@RequestMapping("/")
 public class WxPayController implements WxPayService {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -80,6 +80,10 @@ public class WxPayController implements WxPayService {
   RechargeMapper rechargeMapper;
   @Autowired
   UserSerivce userSerivce;
+  @Autowired
+  UserMapper userMapper;
+  @Autowired
+  GetMoneyMapper getMoneyMapper;
 
 
   /**
@@ -95,9 +99,9 @@ public class WxPayController implements WxPayService {
     return this.wxService.unifiedOrder(request);
   }
 
-  @RequestMapping(value = "wxpay")
+  @RequestMapping(value = "pay/wxpay")
   @ApiOperation("微信支付的api")
-  public String pay(@ApiParam("订单号") String orderNo,
+  public PayResult pay(@ApiParam("订单号") String orderNo,
                     @ApiParam("订单金额，单位为分") Integer money,
                     @ApiParam("用户的openid")String openId,
                     @ApiParam("用户的IP，16位字符串")String userIp,
@@ -117,17 +121,26 @@ public class WxPayController implements WxPayService {
       wxService.createOrder(orderRequest);
       //走到这里说明创建订单成功  把订单插入数据库
       Recharge recharge = new Recharge();
-      recharge.setMoney(money);recharge.setTime(new Date());recharge.setUuid(openId);recharge.setStatus(0);
+      recharge.setMoney(money);recharge.setTime(new Date());recharge.setUuid(openId);recharge.setStatus(0);recharge.setRid(orderNo);
       rechargeMapper.insert(recharge);
-      return wxService.createOrder(orderRequest).toString();
+      String preperStr = wxService.createOrder(orderRequest).toString();
+      System.out.println(preperStr);
+      PayResult result = PayResult.build(preperStr);
+      return result;
     } catch (Exception e) {
       //log.error("微信支付失败！订单号：{},原因:{}", orderNo, e.getMessage());
       e.printStackTrace();
-      return "支付失败";
+      return PayResult.buildError();
     }
   }
 
-  @RequestMapping("/wx")
+  @RequestMapping("/pay/checkpay")
+  @ApiOperation("通过充值的订单id获取订单信息，若不存在则返回空，若存在请比对信息并渲染页面")
+  public Recharge getRecharge(String orderId){
+    return rechargeMapper.selectByPrimaryKey(orderId);
+  }
+
+  @RequestMapping("/pay/wx")
   public String payNotify(HttpServletRequest request, HttpServletResponse response) {
     try {
       String xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
@@ -256,10 +269,7 @@ public class WxPayController implements WxPayService {
   }
 
 
-  /**
-   * TODO 此方法需要改造，根据实际需要返回com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse对象
-   */
-  @Override
+
   //@PostMapping("/parseOrderNotifyResult")
   public WxPayOrderNotifyResult parseOrderNotifyResult(@RequestBody String xmlData) throws WxPayException {
     return this.wxService.parseOrderNotifyResult(xmlData);
@@ -330,8 +340,25 @@ public class WxPayController implements WxPayService {
    *
    * @param request 请求对象
    */
-  @PostMapping("/entPay")
+  @PostMapping("/entpay")
   public EntPayResult entPay(@RequestBody EntPayRequest request) throws WxPayException {
+
+    String  openId = request.getOpenid();
+    Integer money  = request.getAmount();
+    User user      = userMapper.selectByPrimaryKey(openId);
+    if (user == null || user.getUuid()==null){
+      return new EntPayResult();//没有这个用户
+    }
+    if (user.getBalance()<money || user.getBalance()<100 || money<100){//提现的金额不能大于余额，且提现金额必须大于100分
+      return new EntPayResult();
+    }
+    request.setAmount((int)(money*0.85));//0.85的手续费
+    userSerivce.updateBalance(openId,-money);
+    GetMoney getMoney = new GetMoney();
+    getMoney.setUuid(openId);
+    getMoney.setMoney(money);
+    getMoney.setTime(new Date());
+    getMoneyMapper.insert(getMoney);
     return this.wxService.getEntPayService().entPay(request);
   }
 

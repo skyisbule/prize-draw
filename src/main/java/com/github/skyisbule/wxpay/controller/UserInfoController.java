@@ -29,6 +29,12 @@ public class UserInfoController {
         return resultContent;
     }
 
+    @ApiOperation("通过uuid获取用户的信息")
+    @RequestMapping(value = "/get-info",method = RequestMethod.POST)
+    public User getUserByUUID(String uuid){
+        return dao.selectByPrimaryKey(uuid);
+    }
+
     @ApiOperation("更新用户信息")
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     public String doupdate(User user){
