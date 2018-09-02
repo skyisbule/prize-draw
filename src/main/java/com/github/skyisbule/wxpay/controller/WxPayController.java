@@ -349,7 +349,7 @@ public class WxPayController implements WxPayService {
     if (user == null || user.getUuid()==null){
       return new EntPayResult();//没有这个用户
     }
-    if (user.getBalance()<money || user.getBalance()<100 || money<100){//提现的金额不能大于余额，且提现金额必须大于100分
+    if (user.getBalance()<money-1 || user.getBalance()<100 || money<100){//提现的金额不能大于余额，且提现金额必须大于100分
       return new EntPayResult();
     }
     request.setAmount((int)(money*0.85));//0.85的手续费
